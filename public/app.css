@@ -1,0 +1,45 @@
+footer {
+    position: fixed;
+    bottom:0;
+    width:100%;
+    height:100px;
+    background-color: lightskyblue;
+}
+
+header {
+    background-color: cornflowerblue;
+    position:sticky;
+    top:0;
+    width:100%;
+    height:100px;
+}
+
+body {
+    text-align: center !important;
+    background-color: aliceblue;
+    font-family: "Roboto Light", serif !important;
+}
+
+.container {
+    height:100%;
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+
+h2 {
+    margin-top: 27px !important;
+}
+
+a:hover {
+    color: darkslategray !important;
+}
+
+a:active {
+    color: darkslategray !important;
+}
+
+a {
+    text-decoration: none !important;
+    color: black !important;
+}
+

@@ -31,8 +31,8 @@ webpack_encore:
         # {{ encore_entry_script_tags('entry1', null, 'frontend') }}
 
 framework:
-    assets:
-        json_manifest_path: '%kernel.project_dir%/public/build/manifest.json'
+    assets: ~
+        #json_manifest_path: '%kernel.project_dir%/public/build/manifest.json'
 
 #when@prod:
 #    webpack_encore:
