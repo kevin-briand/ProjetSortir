@@ -35,6 +35,10 @@ h2 {
     margin-top: 27px !important;
 }
 
+main {
+    margin-bottom: 105px;
+}
+
 footer {
     position: fixed;
     bottom:0;
