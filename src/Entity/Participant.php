@@ -47,6 +47,9 @@ class Participant
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
     private Collection $organisationSortie;
 
+    #[ORM\Column(length: 30)]
+    private ?string $pseudo = null;
+
     public function __construct()
     {
         $this->inscriptionSortie = new ArrayCollection();
@@ -205,6 +208,18 @@ class Participant
                 $organisationSortie->setOrganisateur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
 
         return $this;
     }
