@@ -14,6 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[UniqueEntity('mail')]
 #[UniqueEntity('pseudo')]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
+
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
