@@ -20,6 +20,9 @@ class EtatFixture extends Fixture
         $etat->setLibelle('cloturée');
         $manager->persist($etat);
         $etat = new Etat();
+        $etat->setLibelle('en cours');
+        $manager->persist($etat);
+        $etat = new Etat();
         $etat->setLibelle('terminée');
         $manager->persist($etat);
         $etat = new Etat();
