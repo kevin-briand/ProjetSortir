@@ -25,6 +25,14 @@ class ProfileType extends AbstractType
                 'disabled' => true,
                 'class' => Campus::class,
                 'choice_label' => 'nom' ])
+            ->add('newPassword', PasswordType::class, [
+                'mapped' => false,
+                'label' => 'Nouveau mot de passe',
+                'required' => false])
+            ->add('confirmPassword', PasswordType::class, [
+                'mapped' => false, // Empêche la liaison du champ avec l'entité
+                'label' => 'Vérification nouveau mot de passe',
+                'required' => false])
         ;
 
     }
@@ -33,6 +41,7 @@ class ProfileType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Participant::class,
+            "allow_extra_fields" => true // Autorise l'ajout de champs hors entité
         ]);
     }
 }

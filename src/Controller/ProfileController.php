@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Participant;
 use App\Form\ProfileType;
-use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,14 +27,15 @@ class ProfileController extends AbstractController
 
         $participantForm->handleRequest($request);
 
-        if ($participantForm->isSubmitted() && $participantForm->isValid()) {
-            $mdp = $participantForm->get('newPassword');
-            $vmdp = $participantForm->get('confirmPassword');
+        if ($participant instanceof Participant && $participantForm->isSubmitted() && $participantForm->isValid()) { //instanceof pour caster l'objet user en Participant
+            $mdp = $participantForm->get('newPassword')->getData(); // Extraction de l'input dans le formulaire
+            $vmdp = $participantForm->get('confirmPassword')->getData();
+
             if($mdp != '' && $mdp === $vmdp) {
-                $participant->setmotPasse($this->passwordHasher->hashPassword(
+                $participant->setMotPasse($this->passwordHasher->hashPassword(
                     $participant,
                     $mdp
-                ));
+                )); // hashage du mot de passe
             }
             $entityManager->persist($participant);
             $entityManager->flush();
