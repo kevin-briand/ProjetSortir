@@ -37,6 +37,12 @@ h2 {
 
 main {
     margin-bottom: 105px;
+    margin-top: 50px;
+}
+
+input {
+    max-width: 50% !important;
+    margin: 1rem auto 2rem !important;
 }
 
 footer {
