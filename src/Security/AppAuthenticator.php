@@ -29,12 +29,12 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $mail_or_usrName = $request->request->get('mail_or_usrName');
+        $mailOrUsrName = $request->request->get('mailOrUsrName');
 
-        $request->getSession()->set(Security::LAST_USERNAME, $mail_or_usrName);
+        $request->getSession()->set(Security::LAST_USERNAME, $mailOrUsrName);
 
         return new Passport(
-            new UserBadge($mail_or_usrName, function ($userIdentifier) {
+            new UserBadge($mailOrUsrName, function ($userIdentifier) {
                 return $this->ParticipantRepository->findByEmailOrUsername($userIdentifier);
             }),
             new PasswordCredentials($request->request->get('password', '')),
@@ -51,7 +51,7 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        return new RedirectResponse($this->urlGenerator->generate('/'));
+        return new RedirectResponse($this->urlGenerator->generate('app_main'));
     }
 
     protected function getLoginUrl(Request $request): string
