@@ -7,9 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
+#[UniqueEntity('mail')]
+#[UniqueEntity('pseudo')]
 class Participant implements UserInterface
 {
     #[ORM\Id]
@@ -26,7 +29,7 @@ class Participant implements UserInterface
     #[ORM\Column]
     private ?int $telephone = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, unique: true)]
     private ?string $mail = null;
 
     #[ORM\Column(length: 255)]
@@ -48,7 +51,7 @@ class Participant implements UserInterface
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
     private Collection $organisationSortie;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, unique: true)]
     private ?string $pseudo = null;
 
     public function __construct()
