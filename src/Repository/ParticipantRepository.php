@@ -39,6 +39,20 @@ class ParticipantRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByEmailOrUsername(string $usernameOrEmail): ?Participant
+    {
+        $entityManager = $this->getEntityManager();
+
+        return $entityManager->createQuery(
+            'SELECT u
+                FROM App\Entity\Participant u
+                WHERE u.mail = :query
+                OR u.pseudo = :query'
+        )
+            ->setParameter('query', $usernameOrEmail)
+            ->getOneOrNullResult();
+   }
+
 //    /**
 //     * @return Participant[] Returns an array of Participant objects
 //     */
