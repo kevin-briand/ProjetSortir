@@ -26,7 +26,7 @@ class ParticipantsFixture extends Fixture implements DependentFixtureInterface
             $participant->setNom($faker->lastName);
             $participant->setPrenom($faker->firstName);
             $participant->setMail($faker->unique()->email);
-            $participant->setPseudo($faker->userName);
+            $participant->setPseudo($faker->unique()->userName);
             $participant->setTelephone('06'.strval(rand(10000000,99999999)));
             $participant->setActif(true);
             $participant->setAdministrateur(false);
