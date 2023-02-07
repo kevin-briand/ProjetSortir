@@ -32,6 +32,8 @@ a {
 }
 
 h2 {
+    font-weight: bolder !important;
+    margin-bottom: 50px !important;
     margin-top: 27px !important;
 }
 
@@ -40,9 +42,21 @@ main {
     margin-top: 50px;
 }
 
-input {
+input, select {
     max-width: 50% !important;
     margin: 1rem auto 2rem !important;
+}
+
+.flash {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+}
+
+.flash-success {
+    background-color: darkseagreen;
 }
 
 footer {
