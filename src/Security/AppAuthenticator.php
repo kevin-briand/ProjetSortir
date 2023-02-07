@@ -29,7 +29,7 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $mailOrUsrName = $request->request->get('mail_or_usrName');
+        $mailOrUsrName = $request->request->get('mailOrUsrName');
 
         $request->getSession()->set(Security::LAST_USERNAME, $mailOrUsrName);
 
