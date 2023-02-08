@@ -35,7 +35,7 @@ class SortieFixture extends Fixture implements DependentFixtureInterface
             $sortie->setNom($faker->sentence);
             $sortie->setDateHeureDebut($faker->dateTimeBetween('-30 days'));
             $sortie->setDateLimiteInscription($faker->dateTimeBetween('now','30 days'));
-            $sortie->setDuree(new \DateTime('02:00'));
+            $sortie->setDuree(rand(30,900));
             $sortie->setNbInscriptionsMax(rand(3,10));
             $sortie->setInfosSortie($faker->text(50));
             $sortie->setEtat($listEtat[rand(0,count($listEtat)-1)]);

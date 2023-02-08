@@ -42,23 +42,23 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $actif = null;
 
-    #[ORM\ManyToOne(inversedBy: 'participant')]
+    #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Campus $campus = null;
 
     #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
-    private Collection $inscriptionSortie;
+    private Collection $inscriptionsSorties;
 
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
-    private Collection $organisationSortie;
+    private Collection $organisationSorties;
 
     #[ORM\Column(length: 30, unique: true)]
     private ?string $pseudo = null;
 
     public function __construct()
     {
-        $this->inscriptionSortie = new ArrayCollection();
-        $this->organisationSortie = new ArrayCollection();
+        $this->inscriptionsSorties = new ArrayCollection();
+        $this->organisationSorties = new ArrayCollection();
     }
 
 
@@ -166,15 +166,15 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Sortie>
      */
-    public function getInscriptionSortie(): Collection
+    public function getInscriptionsSorties(): Collection
     {
-        return $this->inscriptionSortie;
+        return $this->inscriptionsSorties;
     }
 
     public function addInscriptionSortie(Sortie $inscriptionSortie): self
     {
-        if (!$this->inscriptionSortie->contains($inscriptionSortie)) {
-            $this->inscriptionSortie->add($inscriptionSortie);
+        if (!$this->inscriptionsSorties->contains($inscriptionSortie)) {
+            $this->inscriptionsSorties->add($inscriptionSortie);
         }
 
         return $this;
@@ -182,7 +182,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeInscriptionSortie(Sortie $inscriptionSortie): self
     {
-        $this->inscriptionSortie->removeElement($inscriptionSortie);
+        $this->inscriptionsSorties->removeElement($inscriptionSortie);
 
         return $this;
     }
@@ -190,15 +190,15 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Sortie>
      */
-    public function getOrganisationSortie(): Collection
+    public function getOrganisationSorties(): Collection
     {
-        return $this->organisationSortie;
+        return $this->organisationSorties;
     }
 
     public function addOrganisationSortie(Sortie $organisationSortie): self
     {
-        if (!$this->organisationSortie->contains($organisationSortie)) {
-            $this->organisationSortie->add($organisationSortie);
+        if (!$this->organisationSorties->contains($organisationSortie)) {
+            $this->organisationSorties->add($organisationSortie);
             $organisationSortie->setOrganisateur($this);
         }
 
@@ -207,7 +207,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeOrganisationSortie(Sortie $organisationSortie): self
     {
-        if ($this->organisationSortie->removeElement($organisationSortie)) {
+        if ($this->organisationSorties->removeElement($organisationSortie)) {
             // set the owning side to null (unless already changed)
             if ($organisationSortie->getOrganisateur() === $this) {
                 $organisationSortie->setOrganisateur(null);
@@ -231,7 +231,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        return $this->administrateur ? ['ROLE_ADMIN'] : ['ROLE_USER'];
     }
 
     public function eraseCredentials()
