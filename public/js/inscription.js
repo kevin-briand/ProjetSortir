@@ -5,9 +5,18 @@ function toggleInscription(url, id) {
         url: url,
         data: {id: id},
         success: function (result) {
-            if (result.info !== '') {
+            const messageBox = $("#messages");
+            if (result.info) {
+                messageBox.addClass("alert alert-success");
+                messageBox.removeClass("alert-danger");
+                messageBox.text(result.info);
 
+            } else {
+                messageBox.addClass("alert alert-danger");
+                messageBox.removeClass("alert-success");
+                messageBox.text(result.error);
             }
+            messageBox.show();
             console.log(result.info);
             if (url.includes("inscription")) {
                 $("#inscription_" + id).hide();

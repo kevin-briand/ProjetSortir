@@ -41,18 +41,18 @@ class SortiesController extends AbstractController
         $sortie = $sortieRepository->find($request->request->get('id'));
 
         if (!$sortie)
-            $json['error'] = "L'inscription à la sortie à échoué ! (sortie non trouvé)";
+            $json['error'] = "L'inscription à la sortie ".$sortie->getNom()." à échoué ! (sortie non trouvé)";
         elseif ($sortie->getParticipants()->count() >= $sortie->getNbInscriptionsMax())
-            $json['error'] = "L'inscription à la sortie à échoué ! (nombre max de participants atteint)";
+            $json['error'] = "L'inscription à la sortie ".$sortie->getNom()." à échoué ! (nombre max de participants atteint)";
         else {
             if ($user instanceof Participant) {
                 if ($sortie->getParticipants()->contains($user)) {
-                    $json['error'] = "L'inscription à la sortie à échoué ! (vous participez déjà à la sortie)";
+                    $json['error'] = "L'inscription à la sortie ".$sortie->getNom()." à échoué ! (vous participez déjà à la sortie)";
                 } else {
                     $sortie->addParticipant($user);
                     $entityManager->persist($sortie);
                     $entityManager->flush();
-                    $json['info'] = "OK";
+                    $json['info'] = "Inscription à la sortie ".$sortie->getNom()." réussie !";
                 }
             }
         }
@@ -76,16 +76,16 @@ class SortiesController extends AbstractController
         $sortie = $sortieRepository->find($request->request->get('id'));
 
         if (!$sortie)
-            $json['error'] = "Le désistement à la sortie à échoué ! (sortie non trouvé)";
+            $json['error'] = "Le désistement à la sortie à ".$sortie->getNom()." échoué ! (sortie non trouvé)";
         else {
             if ($user instanceof Participant) {
                 if (!$sortie->getParticipants()->contains($user)) {
-                    $json['error'] = "le désistement à la sortie à échoué ! (vous ne participez pas à la sortie)";
+                    $json['error'] = "le désistement à la sortie à ".$sortie->getNom()." échoué ! (vous ne participez pas à la sortie)";
                 } else {
                     $sortie->removeParticipant($user);
                     $entityManager->persist($sortie);
                     $entityManager->flush();
-                    $json['info'] = "OK";
+                    $json['info'] = "Désinscription à la sortie ".$sortie->getNom()." réussie !";
                 }
             }
         }
