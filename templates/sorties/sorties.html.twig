@@ -19,7 +19,7 @@
         </thead>
         <tbody>
         {% for sortie in sorties %}
-            <tr>
+            <td>
                 <td>{{ sortie.nom }}</td>
                 <td>{{ sortie.dateHeureDebut|date('d/m/y H:i') }}</td>
                 <td>{{ sortie.dateLimiteInscription|date('d/m/y') }}</td>
@@ -27,15 +27,31 @@
                 <td>{{ sortie.etat.libelle }}</td>
                 <td></td>
                 <td>{{ sortie.organisateur.pseudo }}</td>
-                {% if app.user.pseudo != sortie.organisateur.pseudo %}
-                    <td><a href="#">Afficher</a></td>
+                <td>
+                {% if app.user != sortie.organisateur %}
+                    <a href="#">Afficher</a>
                 {% else %}
-                    <td><a href="#">Modifier</a></td>
+                    <a href="#">Modifier</a>
                 {% endif %}
+                <a id="{{ sortie.id }}" class="inscription">S'inscrire</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
+    <script>
+        $(".inscription").on("click", function (event) {
+            console.log(event);
+            $.ajax({
+                method: "POST",
+                url: "{{ path('sorties_inscription') }}",
+                data: {id: 1},
+                success: function(){
+                    alert("envoyé");
+                }
+            });
+        })
+    </script>
 
 {% endblock %}
