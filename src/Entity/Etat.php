@@ -6,8 +6,10 @@ use App\Repository\EtatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: EtatRepository::class)]
+#[UniqueEntity('libelle')]
 class Etat
 {
     #[ORM\Id]
@@ -15,15 +17,15 @@ class Etat
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $libelle = null;
 
     #[ORM\OneToMany(mappedBy: 'etat', targetEntity: Sortie::class)]
-    private Collection $sortie;
+    private Collection $sorties;
 
     public function __construct()
     {
-        $this->sortie = new ArrayCollection();
+        $this->sorties = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,15 +48,15 @@ class Etat
     /**
      * @return Collection<int, Sortie>
      */
-    public function getSortie(): Collection
+    public function getSorties(): Collection
     {
-        return $this->sortie;
+        return $this->sorties;
     }
 
     public function addSortie(Sortie $sortie): self
     {
-        if (!$this->sortie->contains($sortie)) {
-            $this->sortie->add($sortie);
+        if (!$this->sorties->contains($sortie)) {
+            $this->sorties->add($sortie);
             $sortie->setEtat($this);
         }
 
@@ -63,7 +65,7 @@ class Etat
 
     public function removeSortie(Sortie $sortie): self
     {
-        if ($this->sortie->removeElement($sortie)) {
+        if ($this->sorties->removeElement($sortie)) {
             // set the owning side to null (unless already changed)
             if ($sortie->getEtat() === $this) {
                 $sortie->setEtat(null);
