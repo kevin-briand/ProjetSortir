@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Participant;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use mysql_xdevapi\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,7 +28,7 @@ class SortiesController extends AbstractController
     public function inscription(Request $request,
                                 SortieRepository $sortieRepository,
                                 EntityManagerInterface $entityManager,
-                                Security $security)
+                                Security $security): JsonResponse
     {
         $json = array();
 
@@ -39,8 +38,7 @@ class SortiesController extends AbstractController
         }
 
         $user = $security->getUser();
-        var_dump($request->request->get('id'));
-        $sortie = $sortieRepository->find(1);
+        $sortie = $sortieRepository->find($request->request->get('id'));
 
         if (!$sortie)
             $json['error'] = "L'inscription à la sortie à échoué ! (sortie non trouvé)";
@@ -48,15 +46,49 @@ class SortiesController extends AbstractController
             $json['error'] = "L'inscription à la sortie à échoué ! (nombre max de participants atteint)";
         else {
             if ($user instanceof Participant) {
-                if ($sortie->getParticipants()->contains($user))
+                if ($sortie->getParticipants()->contains($user)) {
                     $json['error'] = "L'inscription à la sortie à échoué ! (vous participez déjà à la sortie)";
-                $sortie->addParticipant($user);
-                $entityManager->persist($sortie);
-                $entityManager->flush();
+                } else {
+                    $sortie->addParticipant($user);
+                    $entityManager->persist($sortie);
+                    $entityManager->flush();
+                    $json['info'] = "OK";
+                }
             }
-            $json['info'] = "OK";
+        }
+        return new JsonResponse($json);
+    }
+
+    #[Route('/desistement/', name: 'desistement')]
+    public function desistement(Request $request,
+                                SortieRepository $sortieRepository,
+                                EntityManagerInterface $entityManager,
+                                Security $security): JsonResponse
+    {
+        $json = array();
+
+        if(!$request->isXmlHttpRequest()) {
+            $json['error'] = "Bad request";
+            return new JsonResponse($json);
         }
 
+        $user = $security->getUser();
+        $sortie = $sortieRepository->find($request->request->get('id'));
+
+        if (!$sortie)
+            $json['error'] = "Le désistement à la sortie à échoué ! (sortie non trouvé)";
+        else {
+            if ($user instanceof Participant) {
+                if (!$sortie->getParticipants()->contains($user)) {
+                    $json['error'] = "le désistement à la sortie à échoué ! (vous ne participez pas à la sortie)";
+                } else {
+                    $sortie->removeParticipant($user);
+                    $entityManager->persist($sortie);
+                    $entityManager->flush();
+                    $json['info'] = "OK";
+                }
+            }
+        }
         return new JsonResponse($json);
     }
 }
