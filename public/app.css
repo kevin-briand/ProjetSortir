@@ -42,7 +42,7 @@ main {
     margin-top: 50px;
 }
 
-input, select {
+input, select, textarea {
     max-width: 50% !important;
     margin: 1rem auto 2rem !important;
 }

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | Liste des sorties
+    Sorties | {{ parent() }}
 {% endblock %}
 
 {% block body %}
@@ -27,7 +27,7 @@
                 <td>{{ sortie.etat.libelle }}</td>
                 <td></td>
                 <td>{{ sortie.organisateur.pseudo }}</td>
-                {% if app.user.pseudo != sortie.organisateur.pseudo %}
+                {% if app.user != sortie.organisateur %}
                     <td><a href="#">Afficher</a></td>
                 {% else %}
                     <td><a href="#">Modifier</a></td>
