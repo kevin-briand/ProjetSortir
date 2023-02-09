@@ -47,6 +47,10 @@ input, select, textarea {
     margin: 1rem auto 2rem !important;
 }
 
+span {
+    font-weight: bold !important;
+}
+
 .flash {
     padding: 20px;
     font-weight: bold;

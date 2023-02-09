@@ -42,7 +42,7 @@
                 <td>{{ sortie.organisateur.pseudo }}</td>
                 <td>
                     {% if app.user != sortie.organisateur %}
-                        <a href="#">Afficher</a>
+                        <a href="{{ path('sorties_details', {'id':sortie.id })}}">Afficher</a>
                     {% else %}
                         <a href="#">Modifier</a>
                     {% endif %}

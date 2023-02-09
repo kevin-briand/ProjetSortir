@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ sortie.nom }} | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="row" style="padding: 0 40px">
+        <div class="col">
+            <h2 class="h3 mb-3 font-weight-normal">{{ sortie.nom }}</h2>
+
+            <div><span>Nom de la sortie :</span> {{ sortie.nom }}</div>
+            <div><span>Date et heure de la sortie :</span> {{ sortie.dateHeureDebut|date("d/m/Y H:i") }}</div>
+            <div><span>Date limite d'inscription :</span> {{ sortie.dateLimiteInscription|date("d/m/Y") }}</div>
+            <div><span>Nombre de places :</span> {{ sortie.nbInscriptionsMax }}</div>
+            <div><span>Durée :</span> {{ sortie.duree }} minutes</div>
+            <div><span>Description et infos :</span> {{ sortie.infosSortie }}</div>
+            <div><span>Campus :</span> {{ sortie.campus.nom }}</div>
+            <div><span>Lieu :</span> {{ sortie.lieu.nom }}</div>
+            <div><span>Rue :</span> {{ sortie.lieu.rue }}</div>
+            <div><span>Code postal :</span> {{ sortie.lieu.ville.codePostal }}</div>
+            <div><span>Latitude :</span> {{ sortie.lieu.latitude }}</div>
+            <div><span>Longitude :</span> {{ sortie.lieu.longitude }}</div>
+        </div>
+        <div class="col">
+            <h2 class="h3 mb-3 font-weight-normal">Liste des participants inscrits</h2>
+
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>Pseudo</th>
+                    <th>Nom</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for participant in sortie.participants %}
+                    <tr>
+                        <td>{{ participant.pseudo }}</td>
+                        <td>{{ participant.prenom }}  {{ participant.nom }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
