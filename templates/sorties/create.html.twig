@@ -5,7 +5,27 @@
 
     {% form_theme sortieForm 'bootstrap_4_layout.html.twig' %}
     {{ form_start(sortieForm) }}
-    {{ form_widget(sortieForm) }}
+    <div class="row" style="padding: 0 40px">
+        <div class="col">
+            {{ form_row(sortieForm.nom) }}
+            {{ form_row(sortieForm.dateHeureDebut) }}
+            {{ form_row(sortieForm.dateLimiteInscription) }}
+            {{ form_row(sortieForm.nbInscriptionsMax) }}
+            {{ form_row(sortieForm.duree) }}
+        </div>
+        <div class="col">
+            {{ form_row(sortieForm.infosSortie) }}
+            {{ form_row(sortieForm.nomCampus) }}
+            {{ form_row(sortieForm.ville) }}
+            {{ form_row(sortieForm.lieu) }}
+        </div>
+        <div class="col">
+            {{ form_row(sortieForm.rue) }}
+            {{ form_row(sortieForm.codePostal) }}
+            {{ form_row(sortieForm.latitude) }}
+            {{ form_row(sortieForm.longitude) }}
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary">Enregistrer</button>
     <button type="button" class="btn btn-primary">Publier</button>
     <button type="reset" class="btn btn-primary">Annuler</button>
@@ -13,6 +33,6 @@
 {% endblock %}
 
 {% block title %}
-     Nouvelle sortie | {{ parent() }}
+    Nouvelle sortie | {{ parent() }}
 {% endblock %}
 

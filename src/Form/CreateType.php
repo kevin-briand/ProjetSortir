@@ -22,60 +22,61 @@ class CreateType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label' => 'Nom de la sortie'
+                'label' => 'Nom de la sortie :'
             ])
             ->add('dateHeureDebut', DateTimeType::class, [
                 'html5' => true,
                 'widget' => 'single_text',
-                'label' => 'Date et heure de la sortie'
+                'label' => 'Date et heure de la sortie :'
             ])
             ->add('dateLimiteInscription', DateType::class, [
                 'html5' => true,
                 'widget' => 'single_text',
-                'label' => 'Date limite d\'inscription'
+                'label' => 'Date limite d\'inscription :'
             ])
             ->add('nbInscriptionsMax', TextType::class, [
-                'label' => 'Nombre de places'
+                'label' => 'Nombre de places :'
             ])
             ->add('duree', NumberType::class, [
                 'html5' => true
             ])
             ->add('infosSortie', TextType::class, [
-                'label' => 'Description et infos'
+                'label' => 'Description et infos :'
             ])
             ->add('nomCampus', null, [
                 'mapped' => false,
                 'disabled' => true,
+                'label' => 'Campus :',
                 'data' => $builder->getData()->getCampus()->getNom()
             ])
             ->add('ville', EntityType::class, [
-                'label' => "Ville",
+                'label' => "Ville :",
                 'mapped' => false,
                 'class' => Ville::class,
                 'choice_label' => 'nom'
             ])
             ->add('lieu', EntityType::class, [
-                'label' => "Lieu",
+                'label' => "Lieu :",
                 'class' => Lieu::class,
                 'choice_label' => 'nom'
             ])
             ->add('rue', null, [
                 'mapped' => false,
-                'label' => "Rue",
+                'label' => "Rue :",
                 'disabled' => true
             ])
             ->add('codePostal', null, [
                 'mapped' => false,
-                'label' => "Code postal",
+                'label' => "Code postal :",
                 'disabled' => true,
             ])
             ->add('latitude', null, [
                 'mapped' => false,
-                'label' => 'Latitude'
+                'label' => 'Latitude :'
             ])
             ->add('longitude', null, [
                 'mapped' => false,
-                'label' => 'Longitude'
+                'label' => 'Longitude :'
             ])
         ;
     }
