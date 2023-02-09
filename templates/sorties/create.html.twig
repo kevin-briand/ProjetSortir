@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2 class="h3 mb-3 font-weight-normal">Créer une sortie</h2>
+
+    {% form_theme sortieForm 'bootstrap_4_layout.html.twig' %}
+    {{ form_start(sortieForm) }}
+    {{ form_widget(sortieForm) }}
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+    <button type="button" class="btn btn-primary">Publier</button>
+    <button type="reset" class="btn btn-primary">Annuler</button>
+    {{ form_end(sortieForm) }}
+{% endblock %}
+
+{% block title %}
+     Nouvelle sortie | {{ parent() }}
+{% endblock %}
+
