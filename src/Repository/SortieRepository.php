@@ -45,7 +45,10 @@ class SortieRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('sortie');
 
-        $queryBuilder->leftJoin('sortie.participants', 'participants')->addSelect('participants');
+        $queryBuilder
+            ->leftJoin('sortie.participants', 'participants')->addSelect('participants')
+            ->leftJoin('sortie.etat', 'etat')->addSelect('etat')
+            ->leftJoin('sortie.organisateur', 'organisateur')->addSelect('organisateur');
         $query = $queryBuilder->getQuery();
 
         $paginator = new Paginator($query);
