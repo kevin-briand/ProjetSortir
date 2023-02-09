@@ -21,8 +21,7 @@
         "symfony/security-bundle": "6.2.*",
         "symfony/validator": "6.2.*",
         "symfony/webpack-encore-bundle": "^1.16",
-        "symfony/yaml": "6.2.*",
-        "ext-http": "*"
+        "symfony/yaml": "6.2.*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "*",
