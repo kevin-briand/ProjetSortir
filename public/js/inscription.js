@@ -17,13 +17,14 @@ function toggleInscription(url, id) {
                 messageBox.text(result.error);
             }
             messageBox.show();
-            console.log(result.info);
             if (url.includes("inscription")) {
                 $("#inscription_" + id).hide();
                 $("#desistement_" + id).show();
+                $("#inscrit_" + id).text('X');
             } else {
                 $("#inscription_" + id).show();
                 $("#desistement_" + id).hide();
+                $("#inscrit_" + id).text('');
             }
         }
     });

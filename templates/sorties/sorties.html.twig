@@ -38,7 +38,7 @@
                 <td>{{ sortie.dateLimiteInscription|date('d/m/y') }}</td>
                 <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
                 <td>{{ sortie.etat.libelle }}</td>
-                <td>{{ app.user in sortie.participants ? 'X' : '' }}</td>
+                <td id="inscrit_{{ sortie.id }}">{{ app.user in sortie.participants ? 'X' : '' }}</td>
                 <td>{{ sortie.organisateur.pseudo }}</td>
                 <td>
                     {% if app.user != sortie.organisateur %}
