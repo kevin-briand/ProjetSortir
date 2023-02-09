@@ -6,6 +6,17 @@
 
 {% block body %}
 
+    <div class="container">
+        <h3>Filtrer les sorties</h3>
+        <div class="formFilter">
+            {{ form_start(sortiesFilter) }}
+            {{ form_widget(sortiesFilter) }}
+            <button class="btn btn-primary">Rechercher </button>
+            {{ form_end(sortiesFilter) }}
+        </div>
+
+    </div>
+
     <table class="table table-striped table-bordered table-hover">
         <thead>
             <th>Nom de la sortie</th>
