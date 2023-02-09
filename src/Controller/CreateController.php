@@ -32,6 +32,7 @@ class CreateController extends AbstractController
         $sortie->setOrganisateur($user);
         $sortieForm = $this->createForm(CreateType::class, $sortie);
         $sortie->setEtat($etatRepository->findOneBy(['libelle'=> "création"]));
+        $sortie->addParticipant($user);
 
         $sortieForm->handleRequest($request);
 
