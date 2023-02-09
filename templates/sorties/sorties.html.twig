@@ -29,28 +29,30 @@
                 <td></td>
                 <td>{{ sortie.organisateur.pseudo }}</td>
                 <td>
-                {% if app.user != sortie.organisateur %}
-                    <a href="#">Afficher</a>
-                {% else %}
-                    <a href="#">Modifier</a>
-                {% endif %}
-                <a href="#" id="inscription_{{ sortie.id }}" class="inscription">S'inscrire</a>
-                <a href="#" id="desistement_{{ sortie.id }}" class="desistement">Se désister</a>
+                    {% if app.user != sortie.organisateur %}
+                        <a href="#">Afficher</a>
+                    {% else %}
+                        <a href="#">Modifier</a>
+                    {% endif %}
+                    {% if sortie.etat.libelle is same as('en cours') %}
+                        <a href="#" id="inscription_{{ sortie.id }}" class="inscription">S'inscrire</a>
+                    {% endif %}
+                    {% if sortie.etat.libelle in ['en cours', 'cloturée'] %}
+                        <a href="#" id="desistement_{{ sortie.id }}" class="desistement">Se désister</a>
+                    {% endif %}
+                    <!-- Show/hide boutons inscription/désistement -->
+                    {% set inscHidden, desisHidden = false, true %}
+                    {% for participant in sortie.participants %}
+                        {% if participant == app.user %}
+                            {% set inscHidden, desisHidden = true, false %}
+                        {% endif %}
+                    {% endfor %}
+                    <script>
+                        hideButton("inscription_{{ sortie.id }}",{{ inscHidden }})
+                        hideButton("desistement_{{ sortie.id }}",{{ desisHidden }})
+                    </script>
                 </td>
             </tr>
-
-
-            <!-- Show/hide boutons inscription/désistement -->
-            {% set inscHidden, desisHidden = false, true %}
-            {% for participant in sortie.participants %}
-                {% if participant == app.user %}
-                    {% set inscHidden, desisHidden = true, false %}
-                {% endif %}
-            {% endfor %}
-            <script>
-                hideButton("inscription_{{ sortie.id }}",{{ inscHidden }})
-                hideButton("desistement_{{ sortie.id }}",{{ desisHidden }})
-            </script>
 
         {% endfor %}
         </tbody>
