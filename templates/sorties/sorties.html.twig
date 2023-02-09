@@ -19,14 +19,16 @@
 
     <table class="table table-striped table-bordered table-hover">
         <thead>
-            <th>Nom de la sortie</th>
-            <th>Date de la sortie</th>
-            <th>Clotûre inscriptions</th>
-            <th>Inscrits/places</th>
-            <th>Etat</th>
-            <th>Inscrit</th>
-            <th>Organisateur</th>
-            <th>Actions</th>
+            <tr>
+                <th>Nom de la sortie</th>
+                <th>Date de la sortie</th>
+                <th>Clotûre inscriptions</th>
+                <th>Inscrits/places</th>
+                <th>Etat</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Actions</th>
+            </tr>
         </thead>
         <tbody>
         {% for sortie in sorties %}
@@ -38,15 +40,47 @@
                 <td>{{ sortie.etat.libelle }}</td>
                 <td></td>
                 <td>{{ sortie.organisateur.pseudo }}</td>
-                {% if app.user != sortie.organisateur %}
-                    <td><a href="#">Afficher</a></td>
-                {% else %}
-                    <td><a href="#">Modifier</a></td>
-                {% endif %}
+                <td>
+                    {% if app.user != sortie.organisateur %}
+                        <a href="#">Afficher</a>
+                    {% else %}
+                        <a href="#">Modifier</a>
+                    {% endif %}
+                    {% if sortie.etat.libelle is same as('en cours') %}
+                        <a href="#" id="inscription_{{ sortie.id }}" class="inscription">S'inscrire</a>
+                    {% endif %}
+                    {% if sortie.etat.libelle in ['en cours', 'cloturée'] %}
+                        <a href="#" id="desistement_{{ sortie.id }}" class="desistement">Se désister</a>
+                    {% endif %}
+                    <!-- Show/hide boutons inscription/désistement -->
+                    {% set inscHidden, desisHidden = false, true %}
+                    {% for participant in sortie.participants %}
+                        {% if participant == app.user %}
+                            {% set inscHidden, desisHidden = true, false %}
+                        {% endif %}
+                    {% endfor %}
+                    <script>
+                        hideButton("inscription_{{ sortie.id }}",{{ inscHidden }})
+                        hideButton("desistement_{{ sortie.id }}",{{ desisHidden }})
+                    </script>
+                </td>
             </tr>
+
         {% endfor %}
         </tbody>
     </table>
 
-
+    <script>
+        //Ecoute des boutons inscription/désistement
+        $(".inscription").on("click", function (event) {
+            event.preventDefault();
+            toggleInscription("{{ path('sorties_inscription') }}",
+                event.currentTarget.id.split("_")[1]);
+        })
+        $(".desistement").on("click", function (event) {
+            event.preventDefault();
+            toggleInscription("{{ path('sorties_desistement') }}",
+                event.currentTarget.id.split("_")[1]);
+        })
+    </script>
 {% endblock %}
