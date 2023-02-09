@@ -98,7 +98,7 @@ class SortiesController extends AbstractController
     {
         $json = array();
 
-        if(!$request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest()) {
             $json['error'] = "Bad request";
             return new JsonResponse($json);
         }
@@ -107,26 +107,36 @@ class SortiesController extends AbstractController
         $sortie = $sortieRepository->find($request->request->get('id'));
 
         if (!$sortie)
-            $json['error'] = "Le désistement à la sortie à ".$sortie->getNom()." échoué ! (sortie non trouvé)";
+            $json['error'] = "Le désistement à la sortie à " . $sortie->getNom() . " échoué ! (sortie non trouvé)";
         else {
             if ($user instanceof Participant) {
                 if (!$sortie->getParticipants()->contains($user)) {
                     $json['error'] = "le désistement à la sortie à " . $sortie->getNom() . " échoué ! (vous ne participez pas à la sortie)";
-                } elseif ($sortie->getEtat() !== $etatRepository->findOneBy(['libelle'=> "en cours"]) &&
-                    $sortie->getEtat() !== $etatRepository->findOneBy(['libelle'=> "cloturée"])) {
+                } elseif ($sortie->getEtat() !== $etatRepository->findOneBy(['libelle' => "en cours"]) &&
+                    $sortie->getEtat() !== $etatRepository->findOneBy(['libelle' => "cloturée"])) {
                     $json['error'] = "le désistement à la sortie à " . $sortie->getNom() . " échoué ! (la sortie ne peux pas être modifiée)";
                 } else {
                     $sortie->removeParticipant($user);
                     //Changement d'état si la date le permet
-                    if($sortie->getDateLimiteInscription() > new Date()) {
-                        $sortie->setEtat($etatRepository->findOneBy(['libelle'=> "en cours"]));
+                    if ($sortie->getDateLimiteInscription() > new Date()) {
+                        $sortie->setEtat($etatRepository->findOneBy(['libelle' => "en cours"]));
                     }
                     $entityManager->persist($sortie);
                     $entityManager->flush();
-                    $json['info'] = "Désinscription à la sortie ".$sortie->getNom()." réussie !";
+                    $json['info'] = "Désinscription à la sortie " . $sortie->getNom() . " réussie !";
                 }
             }
         }
         return new JsonResponse($json);
+    }
+
+    #[Route('/details/{id}', name: 'details')]
+    public function details(int $id, SortieRepository $sortieRepository): Response
+    {
+        $sortie = $sortieRepository->find($id);
+
+        return $this->render('sorties/details.html.twig', [
+            "sortie" => $sortie
+        ]);
     }
 }
