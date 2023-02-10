@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Sortie;
 use App\Form\FilterType;
 use App\Entity\Participant;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
-use DateInterval;
+use App\Workflow\EtatWorkflow;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -23,13 +21,11 @@ use Symfony\Component\Workflow\WorkflowInterface;
 #[Route('/sorties', name: 'sorties_')]
 class SortiesController extends AbstractController
 {
-    public function __construct(private readonly WorkflowInterface $etatSortieStateMachine,
-                                private EntityManagerInterface $entityManager)
-    {
-    }
 
     #[Route('/', name: 'list')]
-    public function list(SortieRepository $sortieRepository, Request $request, UserInterface $user): Response
+    public function list(SortieRepository $sortieRepository,
+                         Request $request, UserInterface $user,
+                         EtatWorkflow $etatWorkflow): Response
     {
         $sortiesFilter = $this->createForm(FilterType::class);
         $sortiesFilter->handleRequest($request);
@@ -46,7 +42,9 @@ class SortiesController extends AbstractController
             $sorties = $sortieRepository->findAllSorties();
         }
 
-        $this->controleEtat($sorties);
+
+        //Changement des états si nécéssaire
+        $etatWorkflow->controleEtat($sorties);
 
         return $this->render('sorties/sorties.html.twig', [
             "sorties" => $sorties,
@@ -146,46 +144,5 @@ class SortiesController extends AbstractController
         return $this->render('sorties/details.html.twig', [
             "sortie" => $sortie
         ]);
-    }
-
-    private function controleEtat(Paginator $sorties): void {
-        foreach($sorties as $sortie) {
-            /* @var Sortie $sortie */
-            $dateActuelle = new Date;
-            $dateFinSortie = $sortie->getDateHeureDebut();
-            $dateFinSortie->add(DateInterval::createFromDateString($sortie->getDuree() . ' minutes'));
-            $dateArchivage = $dateFinSortie;
-            $dateArchivage->add(DateInterval::createFromDateString('1 month'));
-
-            if($this->etatSortieStateMachine->can($sortie,'reouverture') &&
-                ($sortie->getDateLimiteInscription() > $dateActuelle ||
-                    $sortie->getParticipants()->count() < $sortie->getNbInscriptionsMax()))
-            {
-                $this->etatSortieStateMachine->apply($sortie,'reouverture');
-            }
-            elseif($this->etatSortieStateMachine->can($sortie,'cloture') &&
-                ($sortie->getDateLimiteInscription() <= $dateActuelle ||
-                 $sortie->getParticipants()->count() >= $sortie->getNbInscriptionsMax()))
-            {
-                $this->etatSortieStateMachine->apply($sortie,'cloture');
-            }
-            elseif ($this->etatSortieStateMachine->can($sortie,'sortie_en_cours') &&
-                $sortie->getDateHeureDebut() <= $dateActuelle)
-            {
-                $this->etatSortieStateMachine->apply($sortie,'sortie_en_cours');
-            }
-            elseif ($this->etatSortieStateMachine->can($sortie,'sortie_terminee') &&
-                $dateFinSortie <= $dateActuelle)
-            {
-                $this->etatSortieStateMachine->apply($sortie,'sortie_terminee');
-            }
-            elseif ($this->etatSortieStateMachine->can($sortie,'archivage') &&
-                $dateArchivage <= $dateActuelle)
-            {
-                $this->etatSortieStateMachine->apply($sortie,'archivage');
-            }
-            $this->entityManager->persist($sortie);
-        }
-        $this->entityManager->flush();
     }
 }
