@@ -15,6 +15,10 @@
 
     <button class="btn btn-primary" id="btn-retour">Retour</button>
 
+    {% if app.user.id == participant.id %}
+        <a href="{{ path('profile_modifier') }}"><button class="btn btn-success">Modifier</button></a>
+    {% endif %}
+
     <script>
         $("#btn-retour").on("click", function (event) {
             event.preventDefault();
