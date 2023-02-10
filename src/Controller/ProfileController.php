@@ -42,7 +42,7 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Modification effectuée !');
-            return $this->redirectToRoute('app_main');
+            return $this->redirectToRoute('sorties_list');
         }
 
         return $this->render('security/profile.html.twig', [

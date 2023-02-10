@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme sortieForm 'bootstrap_5_layout.html.twig' %}
+
 {% block body %}
     <h2 class="h3 mb-3 font-weight-normal">Créer une sortie</h2>
 
-    {% form_theme sortieForm 'bootstrap_4_layout.html.twig' %}
     {{ form_start(sortieForm) }}
     <div class="row" style="padding: 0 40px">
         <div class="col">
