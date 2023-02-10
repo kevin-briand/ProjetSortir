@@ -11,25 +11,25 @@ class EtatFixture extends Fixture
     public function load(ObjectManager $manager): void
     {
         $etat = new Etat();
-        $etat->setLibelle('création');
+        $etat->setLibelle('creation');
         $manager->persist($etat);
         $etat = new Etat();
         $etat->setLibelle('ouverte');
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('cloturée');
+        $etat->setLibelle('cloturee');
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('en cours');
+        $etat->setLibelle('en_cours');
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('terminée');
+        $etat->setLibelle('terminee');
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('annulée');
+        $etat->setLibelle('annulee');
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('archivée');
+        $etat->setLibelle('archivee');
         $manager->persist($etat);
 
         $manager->flush();

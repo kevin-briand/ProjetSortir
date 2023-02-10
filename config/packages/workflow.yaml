@@ -1,0 +1,58 @@
+framework:
+    workflows:
+        etat_sortie:
+            type: 'state_machine'
+            marking_store:
+                service: 'etat_sortie_markingstore'
+                property: 'etat'
+            support:
+                - App\Entity\Sortie
+            initial_marking: creation
+            places:
+                - creation
+                - ouverte
+                - cloturee
+                - en_cours
+                - terminee
+                - annulee
+                - archivee
+            transitions:
+                create:
+                    to: creation
+                    metadata:
+                        name: 'Création'
+                publication:
+                    from: creation
+                    to: ouverte
+                    metadata:
+                        name: 'Ouverte'
+                reouverture:
+                    from: cloturee
+                    to: ouverte
+                    metadata:
+                        name: 'Ouverte'
+                cloture:
+                    from: ouverte
+                    to: cloturee
+                    metadata:
+                        name: 'Cloturée'
+                sortie_en_cours:
+                    from: [ouverte, cloturee]
+                    to: en_cours
+                    metadata:
+                        name: 'En cours'
+                sortie_terminee:
+                    from: en_cours
+                    to: terminee
+                    metadata:
+                        name: 'Terminée'
+                annulation:
+                    from: [ouverte, cloturee]
+                    to: annulee
+                    metadata:
+                        name: 'Annulée'
+                archivage:
+                    from: [terminee, annulee]
+                    to: archivee
+                    metadata:
+                        name: 'Archivée'
