@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ participant.pseudo }} | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h2 class="h3 mb-3 font-weight-normal">{{ participant.pseudo }}</h2>
+
+    <div><span>Prénom :</span> {{ participant.prenom }}</div>
+    <div><span>Nom :</span> {{ participant.nom }}</div>
+    <div><span>Téléphone :</span> {{ participant.telephone }}</div>
+    <div><span>E-mail :</span> {{ participant.mail }}</div>
+    <div><span>Campus :</span> {{ participant.campus.nom }}</div>
+
+    <button class="btn btn-primary" id="btn-retour">Retour</button>
+
+    <script>
+        $("#btn-retour").on("click", function (event) {
+            event.preventDefault();
+            window.history.back();
+        })
+    </script>
+{% endblock %}

@@ -77,4 +77,9 @@ footer {
     margin-bottom: 1em;
 }
 
+.btn-primary {
+    background-color: #93c5fd !important;
+    margin-top: 30px !important;
+}
+
 
