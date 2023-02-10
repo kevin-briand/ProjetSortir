@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Date;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/sorties', name: 'sorties_')]
 class SortiesController extends AbstractController
@@ -43,8 +42,9 @@ class SortiesController extends AbstractController
         }
 
 
-        //Changement des états si nécéssaire
+        //Changement des états si nécessaire
         $etatWorkflow->controleEtat($sorties);
+        $etatWorkflow->getNomEtats();
 
         return $this->render('sorties/sorties.html.twig', [
             "sorties" => $sorties,

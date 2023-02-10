@@ -8,28 +8,28 @@ use Doctrine\Persistence\ObjectManager;
 
 class EtatFixture extends Fixture
 {
-    public function load(ObjectManager $manager): void
+    public function load(ObjectManager $manager, ): void
     {
+
         $etat = new Etat();
-        $etat->setLibelle('creation');
+        $etat->setLibelle(Etat::CREATION);
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('ouverte');
+        $etat->setLibelle(Etat::OUVERTE);
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('cloturee');
+        $etat->setLibelle(Etat::CLOTUREE);
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('en_cours');
+        $etat->setLibelle(Etat::EN_COURS);
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('terminee');
+        $etat->setLibelle(Etat::TERMINEE);
         $manager->persist($etat);
         $etat = new Etat();
-        $etat->setLibelle('annulee');
-        $manager->persist($etat);
+        $etat->setLibelle(Etat::ANNULEE);
         $etat = new Etat();
-        $etat->setLibelle('archivee');
+        $etat->setLibelle(Etat::ARCHIVEE);
         $manager->persist($etat);
 
         $manager->flush();

@@ -2,6 +2,7 @@ framework:
     workflows:
         etat_sortie:
             type: 'state_machine'
+            metadata:
             marking_store:
                 service: 'etat_sortie_markingstore'
                 property: 'etat'
@@ -9,50 +10,42 @@ framework:
                 - App\Entity\Sortie
             initial_marking: creation
             places:
-                - creation
-                - ouverte
-                - cloturee
-                - en_cours
-                - terminee
-                - annulee
-                - archivee
+                - !php/const App\Entity\Etat::CREATION
+                - !php/const App\Entity\Etat::OUVERTE
+                - !php/const App\Entity\Etat::CLOTUREE
+                - !php/const App\Entity\Etat::EN_COURS
+                - !php/const App\Entity\Etat::TERMINEE
+                - !php/const App\Entity\Etat::ANNULEE
+                - !php/const App\Entity\Etat::ARCHIVEE
             transitions:
-                create:
-                    to: creation
-                    metadata:
-                        name: 'Création'
-                publication:
-                    from: creation
-                    to: ouverte
-                    metadata:
-                        name: 'Ouverte'
-                reouverture:
-                    from: cloturee
-                    to: ouverte
-                    metadata:
-                        name: 'Ouverte'
-                cloture:
-                    from: ouverte
-                    to: cloturee
-                    metadata:
-                        name: 'Cloturée'
-                sortie_en_cours:
-                    from: [ouverte, cloturee]
-                    to: en_cours
-                    metadata:
-                        name: 'En cours'
-                sortie_terminee:
-                    from: en_cours
-                    to: terminee
-                    metadata:
-                        name: 'Terminée'
-                annulation:
-                    from: [ouverte, cloturee]
-                    to: annulee
-                    metadata:
-                        name: 'Annulée'
-                archivage:
-                    from: [terminee, annulee]
-                    to: archivee
-                    metadata:
-                        name: 'Archivée'
+                !php/const App\Entity\Etat::TRANS_CREATE:
+                    to: !php/const App\Entity\Etat::CREATION
+                    name: !php/const App\Entity\Etat::CREATION_NAME
+                !php/const App\Entity\Etat::TRANS_PUBLICATION:
+                    from: !php/const App\Entity\Etat::CREATION
+                    to: !php/const App\Entity\Etat::OUVERTE
+                    name: !php/const App\Entity\Etat::OUVERTE_NAME
+                !php/const App\Entity\Etat::TRANS_REOUVERTURE:
+                    from: !php/const App\Entity\Etat::CLOTUREE
+                    to: !php/const App\Entity\Etat::OUVERTE
+                    name: !php/const App\Entity\Etat::OUVERTE_NAME
+                !php/const App\Entity\Etat::TRANS_CLOTURE:
+                    from: !php/const App\Entity\Etat::OUVERTE
+                    to: !php/const App\Entity\Etat::CLOTUREE
+                    name: !php/const App\Entity\Etat::CLOTUREE_NAME
+                !php/const App\Entity\Etat::TRANS_SORTIE_EN_COURS:
+                    from: [!php/const App\Entity\Etat::OUVERTE, !php/const App\Entity\Etat::CLOTUREE]
+                    to: !php/const App\Entity\Etat::EN_COURS
+                    name: !php/const App\Entity\Etat::EN_COURS_NAME
+                !php/const App\Entity\Etat::TRANS_SORTIE_TERMINEE:
+                    from: !php/const App\Entity\Etat::EN_COURS
+                    to: !php/const App\Entity\Etat::TERMINEE
+                    name: !php/const App\Entity\Etat::TERMINEE_NAME
+                !php/const App\Entity\Etat::TRANS_ANNULATION:
+                    from: [!php/const App\Entity\Etat::OUVERTE, !php/const App\Entity\Etat::CLOTUREE]
+                    to: !php/const App\Entity\Etat::ANNULEE
+                    name: !php/const App\Entity\Etat::ANNULEE_NAME
+                !php/const App\Entity\Etat::TRANS_ARCHIVAGE:
+                    from: [!php/const App\Entity\Etat::TERMINEE, !php/const App\Entity\Etat::ANNULEE]
+                    to: !php/const App\Entity\Etat::ARCHIVEE
+                    name: !php/const App\Entity\Etat::ARCHIVEE_NAME

@@ -8,10 +8,36 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+
+
+
 #[ORM\Entity(repositoryClass: EtatRepository::class)]
 #[UniqueEntity('libelle')]
 class Etat
 {
+    const CREATION = 'creation';
+    const CREATION_NAME = 'Création';
+    const OUVERTE = 'ouverte';
+    const OUVERTE_NAME = 'Ouverte';
+    const CLOTUREE = 'cloturee';
+    const CLOTUREE_NAME = 'Cloturée';
+    const EN_COURS = 'en_cours';
+    const EN_COURS_NAME = 'En cours';
+    const TERMINEE = 'terminee';
+    const TERMINEE_NAME = 'Terminée';
+    const ANNULEE = 'annulee';
+    const ANNULEE_NAME = 'Annulée';
+    const ARCHIVEE = 'archivee';
+    const ARCHIVEE_NAME = 'Archivée';
+    const TRANS_CREATE = 'create';
+    const TRANS_PUBLICATION = 'publication';
+    const TRANS_REOUVERTURE = 'reouverture';
+    const TRANS_CLOTURE = 'cloture';
+    const TRANS_SORTIE_EN_COURS = 'sortie_en_cours';
+    const TRANS_SORTIE_TERMINEE = 'sortie_terminee';
+    const TRANS_ANNULATION = 'annulation';
+    const TRANS_ARCHIVAGE = 'archivage';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
