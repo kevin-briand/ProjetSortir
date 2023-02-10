@@ -62,9 +62,13 @@ class EtatWorkflow
         $this->entityManager->flush();
     }
 
-    public function publier(Sortie $sortie): bool {
-        if($this->etatSortieStateMachine->can($sortie,Etat::TRANS_PUBLICATION)) {
-            $this->etatSortieStateMachine->apply($sortie,Etat::TRANS_PUBLICATION);
+    public function getEtat(Sortie $sortie): string {
+        return key($this->etatSortieStateMachine->getMarking($sortie)->getPlaces());
+    }
+
+    public function setEtat(Sortie $sortie, string $transition): bool {
+        if($this->etatSortieStateMachine->can($sortie,$transition)) {
+            $this->etatSortieStateMachine->apply($sortie, $transition);
             $this->entityManager->persist($sortie);
             $this->entityManager->flush();
             return true;
@@ -72,22 +76,15 @@ class EtatWorkflow
         return false;
     }
 
-    public function annuler(Sortie $sortie): bool {
-        if($this->etatSortieStateMachine->can($sortie,Etat::TRANS_ANNULATION)) {
-            if($this->etatSortieStateMachine->getMarking($sortie) == Etat::TRANS_CREATE) {
-                $this->entityManager->remove($sortie);
-            } else {
-                $this->etatSortieStateMachine->apply($sortie, Etat::TRANS_ANNULATION);
-                $this->entityManager->persist($sortie);
-                $this->entityManager->flush();
-            }
-            return true;
-        }
-        return false;
+    public function canTransition(Sortie $sortie, String $transition) {
+        return $this->etatSortieStateMachine->can($sortie, $transition);
     }
 
-    public function getNomEtats(): array {
-        var_dump($this->etatSortieStateMachine->getMetadataStore()->getWorkflowMetadata());
-        return array();
+    public function getTransistions(Sortie $sortie): array {
+        return $this->etatSortieStateMachine->getEnabledTransitions($sortie);
+    }
+
+    public function getEtatName(Sortie $sortie): string {
+        return constant(strtoupper('App\Entity\Etat::'.$this->getEtat($sortie).'_NAME'));
     }
 }
