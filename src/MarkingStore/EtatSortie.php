@@ -6,9 +6,15 @@ use App\Repository\EtatRepository;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
+
+/**
+ * Classe de gestion des états de l'entité Sortie
+ * Permet la conversion des états <> string
+ * Inscrit en tant que service
+ * Lié au workflow etat_sortie
+ */
 class EtatSortie implements MarkingStoreInterface
 {
-
     public function __construct(private EtatRepository $etatRepository)
     {
     }
@@ -23,7 +29,8 @@ class EtatSortie implements MarkingStoreInterface
             return new Marking();
         }
 
-        return new Marking(array((string) $etat->getLibelle() => 0));
+        return new Marking(array((string) $etat->getLibelle() => 1));
+
     }
 
     /**

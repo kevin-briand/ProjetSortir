@@ -29,7 +29,6 @@ class Etat
     const ANNULEE_NAME = 'Annulée';
     const ARCHIVEE = 'archivee';
     const ARCHIVEE_NAME = 'Archivée';
-    const TRANS_CREATE = 'create';
     const TRANS_PUBLICATION = 'publication';
     const TRANS_REOUVERTURE = 'reouverture';
     const TRANS_CLOTURE = 'cloture';
