@@ -37,7 +37,7 @@
                 <td>{{ sortie.dateHeureDebut|date('d/m/y H:i') }}</td>
                 <td>{{ sortie.dateLimiteInscription|date('d/m/y') }}</td>
                 <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
-                <td>{# Extraction nom de l'état #}
+                <td id="etat_{{ sortie.id }}">{# Extraction nom de l'état #}
                     {{ constant((workflow_marked_places(sortie)|first~'_name')|upper, sortie.etat) }}
                 </td>
                 <td id="inscrit_{{ sortie.id }}">{{ app.user in sortie.participants ? 'X' : '' }}</td>
@@ -51,17 +51,21 @@
 
 
 
+                    <!-- https://symfony.com/doc/current/workflow.html#usage-in-twig -->
                     {% if workflow_can(sortie,constant('TRANS_PUBLICATION', sortie.etat)) and
                         app.user == sortie.organisateur %}
                         <a href="#" id="publication_{{ sortie.id }}" class="publication">Publier</a>
                     {% endif %}
+
                     {% if workflow_can(sortie,constant('TRANS_ANNULATION',sortie.etat)) and
                         app.user == sortie.organisateur %}
                         <a href="#" id="annulation_{{ sortie.id }}" class="annulation">Annuler</a>
                     {% endif %}
+
                     {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) %}
                         <a href="#" id="inscription_{{ sortie.id }}" class="inscription">S'inscrire</a>
                     {% endif %}
+
                     {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) or
                           workflow_has_marked_place(sortie, constant('EN_COURS', sortie.etat)) or
                           workflow_has_marked_place(sortie, constant('CLOTUREE', sortie.etat)) %}

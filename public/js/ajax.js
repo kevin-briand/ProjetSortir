@@ -7,6 +7,8 @@ function toggleInscription(url, id) {
         success: function (result) {
             if(setMessageBox(result)) {
                 if (url.includes("inscription")) {
+                    if(result.etat)
+                        $("#etat_" + id).text(result.etat);
                     $("#inscription_" + id).hide();
                     $("#desistement_" + id).show();
                     $("#inscrit_" + id).text('X');
@@ -27,6 +29,8 @@ function toggleAnnulation(url, id) {
         data: {id: id},
         success: function (result) {
             if (setMessageBox(result)) {
+                if(result.etat)
+                    $("#etat_" + id).text(result.etat);
                 $("#annulation_" + id).hide();
             } else {
                 $("#annulation_" + id).show();
@@ -42,6 +46,8 @@ function togglePublication(url, id) {
         data: {id: id},
         success: function (result) {
             if (setMessageBox(result)) {
+                if(result.etat)
+                    $("#etat_" + id).text(result.etat);
                 $("#publication_" + id).hide();
             } else {
                 $("#publication_" + id).show();

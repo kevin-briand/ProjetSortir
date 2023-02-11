@@ -59,7 +59,7 @@ class SortiesController extends AbstractController
     {
         /* @var Participant $user */
         $user = $security->getUser();
-        $json = $this->dataIsValid($request, $user);
+        $json = $this->isJSONDatasValid($request, $user);
 
         $sortie = $sortieRepository->find($request->request->get('id'));
         if (!$sortie)
@@ -75,7 +75,11 @@ class SortiesController extends AbstractController
                 $sortie->addParticipant($user);
                 //Test si sortie pleine
                 if ($sortie->getParticipants()->count() == $sortie->getNbInscriptionsMax()) {
-                    $etatWorkflow->setEtat($sortie, Etat::TRANS_CLOTURE);
+                    if(!$etatWorkflow->setEtat($sortie, Etat::TRANS_CLOTURE))
+                        throw new \LogicException("Echec de changement de transition !");
+                    else {
+                        $json['etat'] = $etatWorkflow->getEtatName($sortie);
+                    }
                 }
                 $entityManager->persist($sortie);
                 $entityManager->flush();
@@ -94,7 +98,7 @@ class SortiesController extends AbstractController
     {
         /* @var Participant $user */
         $user = $security->getUser();
-        $json = $this->dataIsValid($request, $user);
+        $json = $this->isJSONDatasValid($request, $user);
 
         $sortie = $sortieRepository->find($request->request->get('id'));
         if (!$sortie)
@@ -109,7 +113,11 @@ class SortiesController extends AbstractController
                 $sortie->removeParticipant($user);
                 //Changement d'état si la date le permet
                 if ($sortie->getDateLimiteInscription() > new Date()) {
-                    $etatWorkflow->setEtat($sortie, Etat::TRANS_REOUVERTURE);
+                    if(!$etatWorkflow->setEtat($sortie, Etat::TRANS_REOUVERTURE))
+                        throw new \LogicException("Echec de changement de transition !");
+                    else {
+                        $json['etat'] = $etatWorkflow->getEtatName($sortie);
+                    }
                 }
                 $entityManager->persist($sortie);
                 $entityManager->flush();
@@ -136,7 +144,7 @@ class SortiesController extends AbstractController
                             EtatWorkflow     $etatWorkflow): JsonResponse
     {
         $user = $security->getUser();
-        $json = $this->dataIsValid($request, $user);
+        $json = $this->isJSONDatasValid($request, $user);
 
         $sortie = $sortieRepository->find($request->request->get('id'));
 
@@ -145,7 +153,11 @@ class SortiesController extends AbstractController
         else {
             if ($etatWorkflow->canTransition($sortie, Etat::TRANS_PUBLICATION) &&
                 $sortie->getOrganisateur() === $user) {
-                $etatWorkflow->setEtat($sortie, Etat::TRANS_PUBLICATION);
+                if(!$etatWorkflow->setEtat($sortie, Etat::TRANS_PUBLICATION))
+                    throw new \LogicException("Echec de changement de transition !");
+                else {
+                    $json['etat'] = $etatWorkflow->getEtatName($sortie);
+                }
                 $json['info'] = "La sortie " . $sortie->getNom() . " est ouverte à tous !";
             } else {
                 $json['error'] = "La sortie " . $sortie->getNom() . " n'a pas pu être modifié";
@@ -162,7 +174,7 @@ class SortiesController extends AbstractController
                             EntityManagerInterface $entityManager): JsonResponse
     {
         $user = $security->getUser();
-        $json = $this->dataIsValid($request, $user);
+        $json = $this->isJSONDatasValid($request, $user);
 
         $sortie = $sortieRepository->find($request->request->get('id'));
 
@@ -174,7 +186,11 @@ class SortiesController extends AbstractController
                 if ($etatWorkflow->getEtat($sortie) == Etat::CREATION) {
                     $entityManager->remove($sortie);
                 } else {
-                    $etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION);
+                    if(!$etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION))
+                        throw new \LogicException("Echec de changement de transition !");
+                    else {
+                        $json['etat'] = $etatWorkflow->getEtatName($sortie);
+                    }
                 }
                 $entityManager->flush();
                 $json['info'] = "La sortie " . $sortie->getNom() . " à été annulée !";
@@ -186,7 +202,7 @@ class SortiesController extends AbstractController
     }
 
 
-    private function dataIsValid(Request $request, null|UserInterface $user): array
+    private function isJSONDatasValid(Request $request, null|UserInterface $user): array
     {
         $json = array();
 
