@@ -6,16 +6,31 @@
 
 {% block body %}
 
-    <div class="container">
-        <h3>Filtrer les sorties</h3>
-        <div class="formFilter">
-            {{ form_start(sortiesFilter) }}
-            {{ form_widget(sortiesFilter) }}
-            <button class="btn btn-primary">Rechercher </button>
-            {{ form_end(sortiesFilter) }}
+    <h2 class="h3 mb-3 font-weight-normal">Filtrer les sorties</h2>
+    {% form_theme sortiesFilter 'bootstrap_5_horizontal_layout.html.twig' %}
+    {{ form_start(sortiesFilter) }}
+    <div class="row padding-0 justify-content-center"  style="padding: 0 40px">
+        <div class="col-md-4 padding-0">
+            {{ form_row(sortiesFilter.campus) }}
+            {{ form_row(sortiesFilter.nom) }}
+            <div class="row g-0">
+                <div class="col">
+                    {{ form_row(sortiesFilter.dateDebut) }}
+                </div>
+                <div class="col">
+                    {{ form_row(sortiesFilter.dateFin) }}
+                </div>
+            </div>
         </div>
-
+        <div class="col-md-4">
+            {{ form_row(sortiesFilter.organisateur) }}
+            {{ form_row(sortiesFilter.inscrit) }}
+            {{ form_row(sortiesFilter.nonInscrit) }}
+            {{ form_row(sortiesFilter.sortiesPassees) }}
+        </div>
     </div>
+    <button class="btn btn-primary mb-3">Rechercher </button>
+    {{ form_end(sortiesFilter) }}
 
     <table class="table table-striped table-bordered table-hover">
         <thead>
@@ -46,7 +61,7 @@
                     {% if app.user != sortie.organisateur %}
                         <a href="{{ path('sorties_details', {'id':sortie.id })}}">Afficher</a>
                     {% else %}
-                        <a href="#">Modifier</a>
+                        <a href="{{ path('create_modification', {'id':sortie.id}) }}">Modifier</a>
                     {% endif %}
 
 

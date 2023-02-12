@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Participant;
 use App\Form\ProfileType;
+use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -41,11 +42,21 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Modification effectuée !');
-            return $this->redirectToRoute('app_main');
+            return $this->redirectToRoute('sorties_list');
         }
 
         return $this->render('security/profile.html.twig', [
             'participantForm' => $participantForm->createView()
+        ]);
+    }
+
+    #[Route('/detailsParticipant/{id}', name: 'detailsParticipant')]
+    public function detailsParticipant(int $id, ParticipantRepository $participantRepository): Response
+    {
+        $participant = $participantRepository->find($id);
+
+        return $this->render('sorties/detailsParticipant.html.twig', [
+            "participant" => $participant
         ]);
     }
 }

@@ -21,7 +21,7 @@ class FilterType extends AbstractType
         $builder
             ->add('campus', EntityType::class, [
                 'class'=>Campus::class,
-                'choice_label' => 'nom'
+                'choice_label' => 'nom',
             ])
             ->add('nom', TextareaType::class, [
                 'required'=>false
@@ -45,18 +45,30 @@ class FilterType extends AbstractType
             ->add('organisateur', CheckboxType::class,[
                 'required'=>false,
                 'label' => 'Sorties dont je suis l\'organisat.eur.rice',
+                'label_attr' => [
+                    'class' => 'checkbox-inline col-form-label m-1',
+                ],
             ])
             ->add('inscrit', CheckboxType::class,[
                 'required'=>false,
                 'label' => 'Sorties auxquelles je suis inscrit.e',
+                'label_attr' => [
+                    'class' => 'checkbox-inline col-form-label m-1',
+                ],
             ])
             ->add('nonInscrit', CheckboxType::class,[
                 'required'=>false,
                 'label' => 'Sorties auxquelles je ne suis pas inscrit.e',
+                'label_attr' => [
+                    'class' => 'checkbox-inline col-form-label m-1',
+                ],
             ])
             ->add('sortiesPassees', CheckboxType::class,[
                 'required'=>false,
                 'label' => 'Sorties passées',
+                'label_attr' => [
+                    'class' => 'checkbox-inline col-form-label m-1',
+                ],
             ])
         ;
     }

@@ -19,6 +19,7 @@
         "symfony/password-hasher": "6.2.*",
         "symfony/runtime": "6.2.*",
         "symfony/security-bundle": "6.2.*",
+        "symfony/translation": "6.2.*",
         "symfony/validator": "6.2.*",
         "symfony/webpack-encore-bundle": "^1.16",
         "symfony/workflow": "6.2.*",

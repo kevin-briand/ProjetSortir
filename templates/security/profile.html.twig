@@ -3,12 +3,19 @@
 {% block body %}
     <h2 class="h3 mb-3 font-weight-normal">Mon profil</h2>
 
-    {% form_theme participantForm 'bootstrap_4_layout.html.twig' %}
+    {% form_theme participantForm 'bootstrap_5_layout.html.twig' %}
     {{ form_start(participantForm) }}
     {{ form_widget(participantForm) }}
     <button type="submit" class="btn btn-primary">Enregistrer</button>
-    <button type="reset" class="btn btn-primary">Annuler</button>
+    <button type="reset" class="btn btn-primary" id="btn-annuler">Annuler</button>
     {{ form_end(participantForm) }}
+
+    <script>
+        $("#btn-annuler").on("click", function (event) {
+            event.preventDefault();
+            window.history.back();
+        })
+    </script>
 {% endblock %}
 
 {% block title %}
