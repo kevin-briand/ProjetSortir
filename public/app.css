@@ -26,6 +26,14 @@ button:hover {
     color: green !important;
 }
 
+#btn-annuler:hover {
+    color: #B0413E !important;
+}
+
+#btn-retour:hover {
+    color: deepskyblue !important;
+}
+
 a:active {
     color: darkslategray !important;
 }
