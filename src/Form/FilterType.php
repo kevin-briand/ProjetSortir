@@ -4,13 +4,12 @@ namespace App\Form;
 
 use App\Component\FilterRequest;
 use App\Entity\Campus;
-use App\Entity\Sortie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,9 +21,11 @@ class FilterType extends AbstractType
             ->add('campus', EntityType::class, [
                 'class'=>Campus::class,
                 'choice_label' => 'nom',
+                'attr' => ['class'=>'no-margin']
             ])
-            ->add('nom', TextareaType::class, [
-                'required'=>false
+            ->add('nom', TextType::class, [
+                'required'=>false,
+                'attr' => ['class'=>'no-margin']
             ])
             ->add('dateDebut', DateType::class,[
                 'html5'=>true,
@@ -33,6 +34,7 @@ class FilterType extends AbstractType
                 'required'=>false,
                 'empty_data' => '',
                 'by_reference' => false,
+                'attr' => ['class'=>'no-margin']
             ])
             ->add('dateFin', DateType::class,[
                 'html5'=>true,
@@ -41,6 +43,7 @@ class FilterType extends AbstractType
                 'required'=>false,
                 'empty_data' => '',
                 'by_reference' => false,
+                'attr' => ['class'=>'no-margin']
             ])
             ->add('organisateur', CheckboxType::class,[
                 'required'=>false,

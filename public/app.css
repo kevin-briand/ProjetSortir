@@ -22,6 +22,10 @@ a:hover {
     color: darkslategray !important;
 }
 
+button:hover {
+    color: green !important;
+}
+
 a:active {
     color: darkslategray !important;
 }
@@ -45,6 +49,10 @@ main {
 input, select, textarea {
     max-width: 50% !important;
     margin: 1rem auto 2rem !important;
+}
+
+.no-margin {
+    margin: 0 0 1.5rem 0 !important;
 }
 
 span {
@@ -80,6 +88,10 @@ footer {
 .btn-primary {
     background-color: #93c5fd !important;
     margin-top: 30px !important;
+}
+
+#search-sortie-btn {
+    margin-top: 0 !important;
 }
 
 .btn-success {
