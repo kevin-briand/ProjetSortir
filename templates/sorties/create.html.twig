@@ -1,9 +1,22 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    {% if sortie.id%}
+        Sortie {{ sortie.nom}} | {{ parent() }}
+    {% else %}
+        Nouvelle sortie | {{ parent() }}
+    {% endif %}
+{% endblock %}
+
 {% form_theme sortieForm 'bootstrap_5_layout.html.twig' %}
 
 {% block body %}
-    <h2 class="h3 mb-3 font-weight-normal">Créer une sortie</h2>
+    {% if sortie.id%}
+        <h2 class="h3 mb-3 font-weight-normal">Modifier la sortie {{ sortie.nom }}</h2>
+        <p class="h5 mb-3">Statut de la sortie : {{ sortie.etat.libelle }}</p>
+    {% else %}
+        <h2 class="h3 mb-3 font-weight-normal">Créer une sortie</h2>
+    {% endif %}
 
     {{ form_start(sortieForm) }}
     <div class="row" style="padding: 0 40px">
@@ -29,11 +42,8 @@
     </div>
     <button type="submit" class="btn btn-primary">Enregistrer</button>
     <button type="button" class="btn btn-primary">Publier</button>
-    <button type="reset" class="btn btn-primary">Annuler</button>
+    {% if sortie.id and sortie.etat.libelle == 'ouverte' or sortie.etat.libelle == 'cloturée' %}
+        <a href="{{ path('create_annulation', {'id':sortie.id })}}"><button type="button" class="btn btn-primary">Annuler</button></a>
+    {% endif %}
     {{ form_end(sortieForm) }}
 {% endblock %}
-
-{% block title %}
-    Nouvelle sortie | {{ parent() }}
-{% endblock %}
-

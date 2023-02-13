@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateType;
@@ -46,7 +47,8 @@ class CreateController extends AbstractController
 
 
         return $this->render('sorties/create.html.twig', [
-            'sortieForm' => $sortieForm->createView()
+            'sortieForm' => $sortieForm->createView(),
+            "sortie" => $sortie
         ]);
     }
 
@@ -55,6 +57,7 @@ class CreateController extends AbstractController
     {
         $sortie = $sortieRepository->find($id);
         if ($sortie != null) {
+
             $sortieForm = $this->createForm(CreateType::class, $sortie);
 
             $sortieForm->handleRequest($request);
@@ -68,7 +71,35 @@ class CreateController extends AbstractController
             }
         }
         return $this->render('sorties/create.html.twig', [
-            'sortieForm' => $sortieForm->createView()
+            'sortieForm' => $sortieForm->createView(),
+            "sortie" => $sortie
+        ]);
+    }
+
+    #[Route('/annulation/{id}', name: 'annulation')]
+    public function annulation(int $id,
+                               Request $request,
+                               EntityManagerInterface $entityManager,
+                               SortieRepository $sortieRepository,
+                               EtatRepository $etatRepository): Response
+    {
+        $sortie = $sortieRepository->find($id);
+        $prevInfo = 'Description initiale : '.$sortie->getInfosSortie();
+        $sortieForm = $this->createForm(CreateType::class, $sortie);
+        $sortieForm->handleRequest($request);
+
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            $sortie->setEtat($etatRepository->findOneBy(['libelle' => "annulée"]));
+            $sortie->setInfosSortie('Sortie annulée pour le motif suivant : '.$sortieForm["infosSortie"]->getData(). ' '. $prevInfo);
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Annulation effectuée !');
+            return $this->redirectToRoute('create_modification', ['id' => $id]);
+        }
+        return $this->render('sorties/annulation.html.twig', [
+            'sortieForm' => $sortieForm->createView(),
+            "sortie" => $sortie
         ]);
     }
 }

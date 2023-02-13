@@ -91,11 +91,12 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if($value->nonInscrit !== false){
-            $queryBuilder->setParameter('usrID', $userID)
-                         ->leftJoin('sortie.participants', 'pa','WITH', 'pa.id != :usrID')->addSelect('pa');
-        }else{
-            $queryBuilder->leftJoin('sortie.participants', 'participants')->addSelect('participants');
+            $queryBuilder//->setParameter('usrID', $userID)
+                         ->innerJoin('sortie.participants', 'p', 'WITH', 'p.id != 34');
+                        // ->andWhere($queryBuilder->expr()->neq('pa.id', '?34'));
         }
+
+        $queryBuilder->leftJoin('sortie.participants', 'participants')->addSelect('participants');
 
         if($value->sortiesPassees !== false){
             $endDate = new \DateTime('now');

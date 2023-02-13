@@ -28,10 +28,8 @@ class SortiesController extends AbstractController
 
         if($sortiesFilter->isSubmitted() && $sortiesFilter->isValid())
         {
-           // $campus = $sortiesFilter->get('campus')->getData();
             $usrID = $user->getId();
             $datas = $sortiesFilter->getData();
-           //dd($datas);
 
             $sorties = $sortieRepository->filterBy($datas, $usrID);
         }else{
@@ -134,7 +132,6 @@ class SortiesController extends AbstractController
     public function details(int $id, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
-
         return $this->render('sorties/details.html.twig', [
             "sortie" => $sortie
         ]);

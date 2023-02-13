@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Annuler la sortie {{ sortie.nom }} | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="row" style="padding: 0 40px">
+        <div class="col">
+            <h2 class="h3 mb-3 font-weight-normal">Annuler la sortie {{ sortie.nom }}</h2>
+            <div><span>Nom de la sortie :</span> {{ sortie.nom }}</div>
+            <div><span>Date et heure de la sortie :</span> {{ sortie.dateHeureDebut|date("d/m/Y H:i") }}</div>
+            <div><span>Campus :</span> {{ sortie.campus.nom }}</div>
+            <div><span>Lieu :</span> {{ sortie.lieu.nom }} {{ sortie.lieu.ville.codePostal}} {{ sortie.lieu.ville.nom}} </div>
+            {{ form_start(sortieForm) }}
+            <div class="container-fluid">
+                <div class="row-cols-auto g-0">
+                    <div class="col-auto col-md-12 g-0">
+                        <span>{{ form_label(sortieForm.infosSortie, 'Motif :') }}</span>
+                    </div>
+                    <div class="col-auto col-md-12 g-0">
+                        {{ form_widget (sortieForm.infosSortie,{'attr': {'value': '', placeholder : 'Motif d\'annulation'}}) }}
+                    </div>
+                </div>
+            </div>
+
+            <div hidden="hidden">
+                {{ form_widget(sortieForm) }}
+            </div>
+
+            <div class="btn-group gap-2">
+                <button type="submit" class="btn btn-success">Confirmer</button>
+                <a href="{{ path('create_modification', {'id':sortie.id}) }}"><button type="button" class="btn btn-primary ">Retour</button></a>
+            </div>
+            {{ form_end(sortieForm) }}
+        </div>
+    </div>
+{% endblock %}
+
