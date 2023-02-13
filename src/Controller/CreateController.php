@@ -104,7 +104,7 @@ class CreateController extends AbstractController
         $sortieForm->handleRequest($request);
         if($user === $sortie->getOrganisateur() and $etatWorkflow->getEtat($sortie) == Etat::OUVERTE){
             if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-                $sortie->setEtat($etatRepository->findOneBy(['libelle' => "annulée"]));
+                $etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION);
                 $sortie->setInfosSortie('Sortie annulée pour le motif suivant : '.$sortieForm["infosSortie"]->getData(). ' '. $prevInfo);
                 $entityManager->persist($sortie);
                 $entityManager->flush();
