@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <img src="{{ asset('img/500.png') }}" alt="Erreur 500" class="erreurs">
+{% endblock %}
+
+{% block title %}
+    Erreur 500 | {{ parent() }}
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <img src="{{ asset('img/403.png') }}" alt="Erreur 403" class="erreurs">
+{% endblock %}
+
+{% block title %}
+    Erreur 403 | {{ parent() }}
+{% endblock %}

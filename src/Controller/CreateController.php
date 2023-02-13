@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateType;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use App\Security\SortieVoter;
+use App\Workflow\EtatWorkflow;
+use Container3VxkvoK\getEtatWorkflowService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -49,14 +52,22 @@ class CreateController extends AbstractController
 
 
         return $this->render('sorties/create.html.twig', [
-            'sortieForm' => $sortieForm->createView()
+            'sortieForm' => $sortieForm->createView(),
+            "sortie" => $sortie
         ]);
     }
 
     #[Route(path: '/modification/{id}', name: 'modification')]
-    public function modification(int $id, Request $request, EntityManagerInterface $entityManager, SortieRepository $sortieRepository): Response
+    public function modification(int $id,
+                                 Request $request,
+                                 Security $security,
+                                 EntityManagerInterface $entityManager,
+                                 EtatWorkflow $etatWorkflow,
+                                 SortieRepository $sortieRepository): Response
     {
+        $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
+
         $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
 
         $sortieForm = $this->createForm(CreateType::class, $sortie);
@@ -72,7 +83,45 @@ class CreateController extends AbstractController
         }
 
         return $this->render('sorties/create.html.twig', [
-            'sortieForm' => $sortieForm->createView()
-        ]);
+                'sortieForm' => $sortieForm->createView(),
+                "sortie" => $sortie
+            ]);
+    }
+
+    #[Route('/annulation/{id}', name: 'annulation')]
+    public function annulation(int $id,
+                               Request $request,
+                               Security $security,
+                               EntityManagerInterface $entityManager,
+                               SortieRepository $sortieRepository,
+                               EtatWorkflow $etatWorkflow,
+                               EtatRepository $etatRepository): Response
+    {
+        $user = $security->getUser();
+        $sortie = $sortieRepository->find($id);
+      
+        $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
+
+        $prevInfo = 'Description initiale : '.$sortie->getInfosSortie();
+        $sortieForm = $this->createForm(CreateType::class, $sortie);
+        $sortieForm->handleRequest($request);
+        if($etatWorkflow->getEtat($sortie) == Etat::OUVERTE){
+            if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+                $etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION);
+                $sortie->setInfosSortie('Sortie annulée pour le motif suivant : '.$sortieForm["infosSortie"]->getData(). ' '. $prevInfo);
+                $entityManager->persist($sortie);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Annulation effectuée !');
+                return $this->redirectToRoute('create_modification', ['id' => $id]);
+            }
+            return $this->render('sorties/annulation.html.twig', [
+                'sortieForm' => $sortieForm->createView(),
+                "sortie" => $sortie
+            ]);
+        }else{
+            $this->addFlash('error', 'No bueno !');
+            return $this->redirectToRoute('sorties_list');
+        }
     }
 }

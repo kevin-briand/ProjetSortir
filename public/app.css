@@ -71,6 +71,11 @@ span {
     background-color: darkseagreen;
 }
 
+.flash-error {
+    background-color: #ff6562;
+}
+
+
 footer {
     position: fixed;
     bottom:0;
@@ -97,6 +102,11 @@ footer {
 .btn-success {
     margin-top: 30px !important;
     background-color: darkseagreen !important;
+}
+
+.erreurs {
+    height: 50%;
+    width: 50%;
 }
 
 
