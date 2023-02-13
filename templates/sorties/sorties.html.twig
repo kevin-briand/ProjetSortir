@@ -70,7 +70,7 @@
 
                     {% if workflow_can(sortie,constant('TRANS_ANNULATION',sortie.etat)) and
                         app.user == sortie.organisateur %}
-                        <a href="#" id="annulation_{{ sortie.id }}" class="annulation">Annuler</a>
+                        <a href="{{ path('create_annulation', {'id':sortie.id}) }}" id="annulation_{{ sortie.id }}" class="annulation">Annuler</a>
                     {% endif %}
 
                     {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) %}
@@ -109,11 +109,6 @@
         $(".publication").on("click", function (event) {
             event.preventDefault();
             togglePublication("{{ path('sorties_publier') }}",
-                event.currentTarget.id.split("_")[1]);
-        })
-        $(".annulation").on("click", function (event) {
-            event.preventDefault();
-            toggleAnnulation("{{ path('sorties_annuler') }}",
                 event.currentTarget.id.split("_")[1]);
         })
     </script>

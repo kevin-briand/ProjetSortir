@@ -29,12 +29,10 @@ class SortiesController extends AbstractController
         $sortiesFilter = $this->createForm(FilterType::class);
         $sortiesFilter->handleRequest($request);
 
-        if ($sortiesFilter->isSubmitted() && $sortiesFilter->isValid()) {
-            // $campus = $sortiesFilter->get('campus')->getData();
+         if($sortiesFilter->isSubmitted() && $sortiesFilter->isValid())
+        {
             $usrID = $user->getId();
             $datas = $sortiesFilter->getData();
-            //dd($datas);
-
             $sorties = $sortieRepository->filterBy($datas, $usrID);
         } else {
             $sorties = $sortieRepository->findAllSorties();
@@ -131,7 +129,6 @@ class SortiesController extends AbstractController
     public function details(int $id, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
-
         return $this->render('sorties/details.html.twig', [
             "sortie" => $sortie
         ]);
