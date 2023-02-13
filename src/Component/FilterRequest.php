@@ -4,6 +4,7 @@ namespace App\Component;
 
 use App\Entity\Campus;
 use App\Entity\Participant;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class FilterRequest
@@ -11,7 +12,7 @@ class FilterRequest
     /**
      * @var Campus
      */
-    public Campus $campus;
+    public Campus|ArrayCollection $campus;
 
     /**
      * @var string|null
