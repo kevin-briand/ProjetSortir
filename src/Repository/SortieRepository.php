@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Sortie;
+use App\Form\FilterType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -57,9 +58,15 @@ class SortieRepository extends ServiceEntityRepository
 
     public function filterBy($value, $userID)
     {
+        $campusID = array();
+        foreach ($value->campus as $status) {
+            $campusID[] = $status->getId();
+        }
+
         $queryBuilder = $this->createQueryBuilder('sortie');
-        $queryBuilder->setParameter('campusID', $value->campus->getId());
-        $queryBuilder->andWhere('sortie.campus = :campusID');
+        $queryBuilder->setParameter('campusID', $campusID);
+        $queryBuilder->andWhere('sortie.campus IN (:campusID)');
+
 
         if(!empty($value->nom)){
             $queryBuilder->setParameter('searchTerm', '%'."{$value->nom}".'%');
@@ -87,13 +94,13 @@ class SortieRepository extends ServiceEntityRepository
 
         if($value->inscrit !== false && $value->inscrit !==null ){
             $queryBuilder->setParameter('userID', $userID)
-                         ->innerJoin('sortie.participants', 'p','WITH', 'p.id = :userID');
+                         ->andWhere(':userID MEMBER OF sortie.participants');
+                         //->innerJoin('sortie.participants', 'p','WITH', 'p.id = :userID');
         }
 
         if($value->nonInscrit !== false){
             $queryBuilder->setParameter('usrID', $userID)
                          ->andWhere(':usrID NOT MEMBER OF sortie.participants');
-                        // ->andWhere($queryBuilder->expr()->neq('pa.id', '?34'));
         }
 
         $queryBuilder->leftJoin('sortie.participants', 'participants')->addSelect('participants');
@@ -104,11 +111,8 @@ class SortieRepository extends ServiceEntityRepository
                          ->andWhere($queryBuilder->expr()->lte('sortie.dateHeureDebut', ':closingDate'));
         }
 
-
-
         $query = $queryBuilder->getQuery();
-        $paginator = new Paginator($query);
-        return $paginator;
+        return new Paginator($query);
     }
 
 //    /**
