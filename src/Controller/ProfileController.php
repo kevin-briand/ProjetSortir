@@ -8,6 +8,7 @@ use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -22,6 +23,9 @@ class ProfileController extends AbstractController
 
     #[Route(path: '', name: 'modifier')]
     public function modifier(Request $request, EntityManagerInterface $entityManager, Security $security): Response {
+
+        if(!$this->isGranted('ROLE_USER'))
+            throw new AccessDeniedException();
 
         $participant = $security->getUser();
         $participantForm = $this->createForm(ProfileType::class, $participant);
@@ -53,6 +57,9 @@ class ProfileController extends AbstractController
     #[Route('/detailsParticipant/{id}', name: 'detailsParticipant')]
     public function detailsParticipant(int $id, ParticipantRepository $participantRepository): Response
     {
+        if(!$this->isGranted('ROLE_USER'))
+            throw new AccessDeniedException();
+
         $participant = $participantRepository->find($id);
 
         return $this->render('sorties/detailsParticipant.html.twig', [

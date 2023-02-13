@@ -8,6 +8,7 @@ use App\Entity\Sortie;
 use App\Form\CreateType;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
+use App\Security\SortieVoter;
 use App\Workflow\EtatWorkflow;
 use Container3VxkvoK\getEtatWorkflowService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,10 +29,12 @@ class CreateController extends AbstractController
     public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
     {
         $sortie = new Sortie();
+        $this->denyAccessUnlessGranted(SortieVoter::VIEW, $sortie);
+
+        /* @var Participant $user */
         $user = $this->security->getUser();
 
-        if ($user instanceof Participant)
-            $sortie->setCampus($user->getCampus());
+        $sortie->setCampus($user->getCampus());
         $sortie->setOrganisateur($user);
         $sortieForm = $this->createForm(CreateType::class, $sortie);
         $sortie->setEtat($etatRepository->findOneBy(['libelle' => "création"]));
@@ -64,27 +67,25 @@ class CreateController extends AbstractController
     {
         $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
-        if($user === $sortie->getOrganisateur()) /*and $etatWorkflow->getEtat($sortie) == Etat::CREATION)*/{
-            $sortieForm = $this->createForm(CreateType::class, $sortie);
-            if (!$sortie) {
-                $sortieForm->handleRequest($request);
 
-                if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-                    $entityManager->persist($sortie);
-                    $entityManager->flush();
+        $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
 
-                    $this->addFlash('success', 'Modification effectuée !');
-                    return $this->redirectToRoute('sorties_list');
-                }
-            }
-            return $this->render('sorties/create.html.twig', [
+        $sortieForm = $this->createForm(CreateType::class, $sortie);
+
+        $sortieForm->handleRequest($request);
+
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Modification effectuée !');
+            return $this->redirectToRoute('sorties_list');
+        }
+
+        return $this->render('sorties/create.html.twig', [
                 'sortieForm' => $sortieForm->createView(),
                 "sortie" => $sortie
             ]);
-        }else{
-            $this->addFlash('error', 'No bueno !');
-            return $this->redirectToRoute('sorties_list');
-        }
     }
 
     #[Route('/annulation/{id}', name: 'annulation')]
@@ -98,11 +99,13 @@ class CreateController extends AbstractController
     {
         $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
+      
+        $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
 
         $prevInfo = 'Description initiale : '.$sortie->getInfosSortie();
         $sortieForm = $this->createForm(CreateType::class, $sortie);
         $sortieForm->handleRequest($request);
-        if($user === $sortie->getOrganisateur() and $etatWorkflow->getEtat($sortie) == Etat::OUVERTE){
+        if($etatWorkflow->getEtat($sortie) == Etat::OUVERTE){
             if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
                 $etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION);
                 $sortie->setInfosSortie('Sortie annulée pour le motif suivant : '.$sortieForm["infosSortie"]->getData(). ' '. $prevInfo);
