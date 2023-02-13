@@ -91,8 +91,8 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if($value->nonInscrit !== false){
-            $queryBuilder//->setParameter('usrID', $userID)
-                         ->innerJoin('sortie.participants', 'p', 'WITH', 'p.id != 34');
+            $queryBuilder->setParameter('usrID', $userID)
+                         ->innerJoin('sortie.participants', 'pa', 'WITH', 'p.id != :usrID');
                         // ->andWhere($queryBuilder->expr()->neq('pa.id', '?34'));
         }
 
