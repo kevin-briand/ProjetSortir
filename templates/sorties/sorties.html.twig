@@ -48,7 +48,9 @@
                 <td>{{ sortie.dateHeureDebut|date('d/m/y H:i') }}</td>
                 <td>{{ sortie.dateLimiteInscription|date('d/m/y') }}</td>
                 <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
-                <td>{{ sortie.etat.libelle }}</td>
+                <td id="etat_{{ sortie.id }}">{# Extraction nom de l'état #}
+                    {{ constant((workflow_marked_places(sortie)|first~'_name')|upper, sortie.etat) }}
+                </td>
                 <td id="inscrit_{{ sortie.id }}">{{ app.user in sortie.participants ? 'X' : '' }}</td>
                 <td>{{ sortie.organisateur.pseudo }}</td>
                 <td>
@@ -57,22 +59,33 @@
                     {% else %}
                         <a href="{{ path('create_modification', {'id':sortie.id}) }}">Modifier</a>
                     {% endif %}
-                    {% if sortie.etat.libelle is same as('en cours') %}
+
+
+
+                    <!-- https://symfony.com/doc/current/workflow.html#usage-in-twig -->
+                    {% if workflow_can(sortie,constant('TRANS_PUBLICATION', sortie.etat)) and
+                        app.user == sortie.organisateur %}
+                        <a href="#" id="publication_{{ sortie.id }}" class="publication">Publier</a>
+                    {% endif %}
+
+                    {% if workflow_can(sortie,constant('TRANS_ANNULATION',sortie.etat)) and
+                        app.user == sortie.organisateur %}
+                        <a href="#" id="annulation_{{ sortie.id }}" class="annulation">Annuler</a>
+                    {% endif %}
+
+                    {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) %}
                         <a href="#" id="inscription_{{ sortie.id }}" class="inscription">S'inscrire</a>
                     {% endif %}
-                    {% if sortie.etat.libelle in ['en cours', 'cloturée'] %}
+
+                    {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) or
+                          workflow_has_marked_place(sortie, constant('EN_COURS', sortie.etat)) or
+                          workflow_has_marked_place(sortie, constant('CLOTUREE', sortie.etat)) %}
                         <a href="#" id="desistement_{{ sortie.id }}" class="desistement">Se désister</a>
                     {% endif %}
                     <!-- Show/hide boutons inscription/désistement -->
-                    {% set inscHidden, desisHidden = false, true %}
-                    {% for participant in sortie.participants %}
-                        {% if participant == app.user %}
-                            {% set inscHidden, desisHidden = true, false %}
-                        {% endif %}
-                    {% endfor %}
                     <script>
-                        hideButton("inscription_{{ sortie.id }}",{{ inscHidden }})
-                        hideButton("desistement_{{ sortie.id }}",{{ desisHidden }})
+                        hideButton("inscription_{{ sortie.id }}",{{ app.user in sortie.participants ? true : false }})
+                        hideButton("desistement_{{ sortie.id }}",{{ app.user in sortie.participants ? false : true }})
                     </script>
                 </td>
             </tr>
@@ -91,6 +104,16 @@
         $(".desistement").on("click", function (event) {
             event.preventDefault();
             toggleInscription("{{ path('sorties_desistement') }}",
+                event.currentTarget.id.split("_")[1]);
+        })
+        $(".publication").on("click", function (event) {
+            event.preventDefault();
+            togglePublication("{{ path('sorties_publier') }}",
+                event.currentTarget.id.split("_")[1]);
+        })
+        $(".annulation").on("click", function (event) {
+            event.preventDefault();
+            toggleAnnulation("{{ path('sorties_annuler') }}",
                 event.currentTarget.id.split("_")[1]);
         })
     </script>
