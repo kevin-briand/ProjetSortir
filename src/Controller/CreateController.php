@@ -7,6 +7,7 @@ use App\Entity\Sortie;
 use App\Form\CreateType;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
+use App\Security\SortieVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -25,10 +26,12 @@ class CreateController extends AbstractController
     public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
     {
         $sortie = new Sortie();
+        $this->denyAccessUnlessGranted(SortieVoter::VIEW, $sortie);
+
+        /* @var Participant $user */
         $user = $this->security->getUser();
 
-        if ($user instanceof Participant)
-            $sortie->setCampus($user->getCampus());
+        $sortie->setCampus($user->getCampus());
         $sortie->setOrganisateur($user);
         $sortieForm = $this->createForm(CreateType::class, $sortie);
         $sortie->setEtat($etatRepository->findOneBy(['libelle' => "création"]));
@@ -54,19 +57,20 @@ class CreateController extends AbstractController
     public function modification(int $id, Request $request, EntityManagerInterface $entityManager, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
-        if ($sortie != null) {
-            $sortieForm = $this->createForm(CreateType::class, $sortie);
+        $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
 
-            $sortieForm->handleRequest($request);
+        $sortieForm = $this->createForm(CreateType::class, $sortie);
 
-            if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-                $entityManager->persist($sortie);
-                $entityManager->flush();
+        $sortieForm->handleRequest($request);
 
-                $this->addFlash('success', 'Modification effectuée !');
-                return $this->redirectToRoute('sorties_list');
-            }
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Modification effectuée !');
+            return $this->redirectToRoute('sorties_list');
         }
+
         return $this->render('sorties/create.html.twig', [
             'sortieForm' => $sortieForm->createView()
         ]);
