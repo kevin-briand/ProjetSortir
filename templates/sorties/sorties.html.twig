@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme sortiesFilter 'bootstrap_5_horizontal_layout.html.twig' %}
+
 {% block title %}
     Sorties | {{ parent() }}
 {% endblock %}
@@ -7,29 +9,23 @@
 {% block body %}
 
     <h2 class="h3 mb-3 font-weight-normal">Filtrer les sorties</h2>
-    {% form_theme sortiesFilter 'bootstrap_5_horizontal_layout.html.twig' %}
+
     {{ form_start(sortiesFilter) }}
-    <div class="row padding-0 justify-content-center"  style="padding: 0 40px">
-        <div class="col-md-4 padding-0">
+    <div class="row"  style="padding: 0 40px">
+        <div class="col" style="text-align: start; margin-left: 7rem">
             {{ form_row(sortiesFilter.campus) }}
             {{ form_row(sortiesFilter.nom) }}
-            <div class="row g-0">
-                <div class="col">
-                    {{ form_row(sortiesFilter.dateDebut) }}
-                </div>
-                <div class="col">
-                    {{ form_row(sortiesFilter.dateFin) }}
-                </div>
-            </div>
+            {{ form_row(sortiesFilter.dateDebut) }}
+            {{ form_row(sortiesFilter.dateFin) }}
         </div>
-        <div class="col-md-4">
+        <div class="col" style="text-align: start">
             {{ form_row(sortiesFilter.organisateur) }}
             {{ form_row(sortiesFilter.inscrit) }}
             {{ form_row(sortiesFilter.nonInscrit) }}
             {{ form_row(sortiesFilter.sortiesPassees) }}
         </div>
     </div>
-    <button class="btn btn-primary mb-3">Rechercher </button>
+    <button class="btn btn-primary mb-3" id="search-sortie-btn">Rechercher</button>
     {{ form_end(sortiesFilter) }}
 
     <table class="table table-striped table-bordered table-hover">
