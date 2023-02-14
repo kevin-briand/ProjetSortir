@@ -16,7 +16,7 @@ class CampusFixture extends Fixture
 
         for ($i = 0; $i < 5; $i++) {
             $campus = new Campus();
-            $campus->setNom($faker->unique()->name);
+            $campus->setNom($faker->unique()->lastName());
 
             $manager->persist($campus);
         }

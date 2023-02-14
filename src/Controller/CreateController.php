@@ -10,7 +10,6 @@ use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use App\Security\SortieVoter;
 use App\Workflow\EtatWorkflow;
-use Container3VxkvoK\getEtatWorkflowService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -26,7 +25,10 @@ class CreateController extends AbstractController
     }
 
     #[Route(path: '', name: 'sortie')]
-    public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
+    public function create(Request $request,
+                           EntityManagerInterface $entityManager,
+                           EtatRepository $etatRepository,
+                           EtatWorkflow $etatWorkflow): Response
     {
         $sortie = new Sortie();
         $this->denyAccessUnlessGranted(SortieVoter::VIEW, $sortie);
@@ -37,7 +39,7 @@ class CreateController extends AbstractController
         $sortie->setCampus($user->getCampus());
         $sortie->setOrganisateur($user);
         $sortieForm = $this->createForm(CreateType::class, $sortie);
-        $sortie->setEtat($etatRepository->findOneBy(['libelle' => "création"]));
+        $sortie->setEtat($etatRepository->findOneBy(['libelle' => Etat::CREATION]));
         $sortie->addParticipant($user);
 
         $sortieForm->handleRequest($request);
@@ -45,6 +47,10 @@ class CreateController extends AbstractController
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             $entityManager->persist($sortie);
             $entityManager->flush();
+
+            if($request->get('submit') == 'publier') {
+                $etatWorkflow->setEtat($sortie, Etat::TRANS_PUBLICATION);
+            }
 
             $this->addFlash('success', 'Sortie ajoutée !');
             return $this->redirectToRoute('sorties_list');
@@ -77,6 +83,9 @@ class CreateController extends AbstractController
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             $entityManager->persist($sortie);
             $entityManager->flush();
+
+            if($request->get('submit') == 'publier')
+                $etatWorkflow->setEtat($sortie,Etat::TRANS_PUBLICATION);
 
             $this->addFlash('success', 'Modification effectuée !');
             return $this->redirectToRoute('sorties_list');
