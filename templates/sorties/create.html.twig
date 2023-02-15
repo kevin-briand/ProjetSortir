@@ -46,4 +46,29 @@
         <a href="{{ path('create_annulation', {'id':sortie.id })}}"><button type="button" class="btn btn-primary">Annuler</button></a>
     {% endif %}
     {{ form_end(sortieForm) }}
+
+    <script>
+        let $ville = document.getElementById("create_ville");
+        $ville.addEventListener('change',function () {
+            $.ajax({
+                method : "POST",
+                url : "{{ path('create_lieux') }}", //on envoie l'id par là > trouve la ville > retourne lieux associés
+                data : {id: parseInt($ville.value)},
+                success: function (result) {
+                    //ici ça nous renvoie la liste des lieux associés à la ville
+                    console.log(result);
+                    /* no bueno, issu du tuto sur les formEvents
+                    var placesData = {};
+                    for (let resultKey in result) {
+                        console.log();
+                    }
+                    console.log(placesData)
+                    $('#create_lieu').append(
+                        $(result).find('#create_lieu')
+                    );*/
+                }
+            });
+        });
+    </script>
+
 {% endblock %}

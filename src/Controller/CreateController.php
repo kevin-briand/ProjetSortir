@@ -7,12 +7,15 @@ use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateType;
 use App\Repository\EtatRepository;
+use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
+use App\Repository\VilleRepository;
 use App\Security\SortieVoter;
 use App\Workflow\EtatWorkflow;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -133,4 +136,24 @@ class CreateController extends AbstractController
             return $this->redirectToRoute('sorties_list');
         }
     }
+
+    #[Route('/lieux', name: 'lieux')]
+    public function lieux(Request $request,
+                          VilleRepository $villeRepository,
+                          LieuRepository $lieuRepository,
+                          EntityManagerInterface $entityManager): JsonResponse
+    {
+        $ville = $villeRepository->find($request->request->get('id'));
+        /*$lieu = $lieuRepository->findBy(['ville' => $ville ]); //seul moyen d'avoir les datas des lieux
+        $spots = null;
+        foreach ($lieu as $lie){
+            $spots =+ [$lie->getId() => $lie->getNom()];
+        }
+       //$lieux = $ville->getLieux();
+        $json = json_encode();
+        //return new JsonResponse($json);/*/
+        return $this->json($ville->getLieux()); //renvoie un truc tout vide
+
+    }
+
 }

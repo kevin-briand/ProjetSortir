@@ -17,7 +17,23 @@
             <div><span>Description et infos :</span> {{ sortie.infosSortie }}</div>
             <div><span>Campus :</span> {{ sortie.campus.nom }}</div>
             <div><span>Lieu :</span> {{ sortie.lieu.nom }}</div>
-            <div><span>Rue :</span> {{ sortie.lieu.rue }}</div>
+            <div><span>Rue :</span> {{ sortie.lieu.rue}} </div>
+                {#   #[Route('/api/books', name: 'book', methods: ['GET'])]
+
+    public function getBookList(BookRepository $bookRepository): JsonResponse
+
+    {
+
+        $bookList = $bookRepository->findAll();
+
+
+        return new JsonResponse([
+
+            'books' => $bookList,
+
+        ]);
+
+    }e }} #}
             <div><span>Code postal :</span> {{ sortie.lieu.ville.codePostal }}</div>
             <div><span>Latitude :</span> {{ sortie.lieu.latitude }}</div>
             <div><span>Longitude :</span> {{ sortie.lieu.longitude }}</div>
