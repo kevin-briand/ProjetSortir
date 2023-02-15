@@ -126,7 +126,7 @@ class CreateController extends AbstractController
             }
 
             $this->addFlash('success', 'Annulation effectuée !');
-            return $this->redirectToRoute('create_modification', ['id' => $id]);
+            return $this->redirectToRoute('sorties_details', ['id' => $id]);
         }
         return $this->render('sorties/annulation.html.twig', [
             'sortieForm' => $sortieForm->createView(),
