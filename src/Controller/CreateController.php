@@ -114,7 +114,7 @@ class CreateController extends AbstractController
         $prevInfo = 'Description initiale : '.$sortie->getInfosSortie();
         $sortieForm = $this->createForm(CreateType::class, $sortie);
         $sortieForm->handleRequest($request);
-        if($etatWorkflow->getEtat($sortie) == Etat::OUVERTE){
+        if($etatWorkflow->canTransition($sortie,Etat::TRANS_ANNULATION)){
             if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
                 $etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION);
                 $sortie->setInfosSortie('Sortie annulée pour le motif suivant : '.$sortieForm["infosSortie"]->getData(). ' '. $prevInfo);
