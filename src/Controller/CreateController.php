@@ -19,6 +19,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 #[Route(path: '/create', name: 'create_')]
 class CreateController extends AbstractController
@@ -143,6 +147,8 @@ class CreateController extends AbstractController
                           LieuRepository $lieuRepository,
                           EntityManagerInterface $entityManager): JsonResponse
     {
+        $json = $this->isJSONDatasValid($request);
+
         $ville = $villeRepository->find($request->request->get('id'));
         /*$lieu = $lieuRepository->findBy(['ville' => $ville ]); //seul moyen d'avoir les datas des lieux
         $spots = null;
@@ -152,8 +158,22 @@ class CreateController extends AbstractController
        //$lieux = $ville->getLieux();
         $json = json_encode();
         //return new JsonResponse($json);/*/
-        return $this->json($ville->getLieux()); //renvoie un truc tout vide
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+        $json['info'] = serialize($ville->getLieux());
+        return $this->json($ville,Response::HTTP_OK,[],['groups'=>'lieux']);
+        //return $this->json($ville->getLieux()); //renvoie un truc tout vide
 
     }
 
+    private function isJSONDatasValid(Request $request): array
+    {
+        $json = array();
+
+        if (!$request->isXmlHttpRequest())
+            $json['error'] = "Bad request";
+
+        return $json;
+    }
 }

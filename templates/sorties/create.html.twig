@@ -50,10 +50,11 @@
     <script>
         let $ville = document.getElementById("create_ville");
         $ville.addEventListener('change',function () {
+            console.log($ville.value)
             $.ajax({
                 method : "POST",
                 url : "{{ path('create_lieux') }}", //on envoie l'id par là > trouve la ville > retourne lieux associés
-                data : {id: parseInt($ville.value)},
+                data : {id: $ville.value},
                 success: function (result) {
                     //ici ça nous renvoie la liste des lieux associés à la ville
                     console.log(result);
