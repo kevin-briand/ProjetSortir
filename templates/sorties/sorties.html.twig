@@ -56,10 +56,11 @@
                 <td id="inscrit_{{ sortie.id }}">{{ app.user in sortie.participants ? 'X' : '' }}</td>
                 <td>{{ sortie.organisateur.pseudo }}</td>
                 <td>
-                    {% if app.user != sortie.organisateur %}
-                        <a href="{{ path('sorties_details', {'id':sortie.id })}}">Afficher</a>
-                    {% else %}
+                    {% if is_granted('edit', sortie) and
+                        workflow_has_marked_place(sortie, constant('CREATION', sortie.etat)) %}
                         <a href="{{ path('create_modification', {'id':sortie.id}) }}">Modifier</a>
+                    {% else %}
+                        <a href="{{ path('sorties_details', {'id':sortie.id })}}">Afficher</a>
                     {% endif %}
 
 
