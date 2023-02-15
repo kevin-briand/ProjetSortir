@@ -45,54 +45,57 @@
         </thead>
         <tbody>
         {% for sortie in sorties %}
-            <tr>
-                <td>{{ sortie.nom }}</td>
-                <td>{{ sortie.dateHeureDebut|date('d/m/y H:i') }}</td>
-                <td>{{ sortie.dateLimiteInscription|date('d/m/y') }}</td>
-                <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
-                <td id="etat_{{ sortie.id }}">{# Extraction nom de l'état #}
-                    {{ constant((workflow_marked_places(sortie)|first~'_name')|upper, sortie.etat) }}
-                </td>
-                <td id="inscrit_{{ sortie.id }}">{{ app.user in sortie.participants ? 'X' : '' }}</td>
-                <td>{{ sortie.organisateur.pseudo }}</td>
-                <td>
-                    {% if is_granted('edit', sortie) and
-                        workflow_has_marked_place(sortie, constant('CREATION', sortie.etat)) %}
-                        <a href="{{ path('create_modification', {'id':sortie.id}) }}" id="modification_{{ sortie.id }}">Modifier</a>
-                    {% else %}
-                        <a href="{{ path('sorties_details', {'id':sortie.id })}}">Afficher</a>
-                    {% endif %}
+            {% if is_granted('edit',sortie)
+                or (not workflow_has_marked_place(sortie,constant('CREATION', sortie.etat))
+                and not workflow_has_marked_place(sortie,constant('ARCHIVEE', sortie.etat))) %}
+                <tr>
+                    <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.dateHeureDebut|date('d/m/y H:i') }}</td>
+                    <td>{{ sortie.dateLimiteInscription|date('d/m/y') }}</td>
+                    <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                    <td id="etat_{{ sortie.id }}">{# Extraction nom de l'état #}
+                        {{ constant((workflow_marked_places(sortie)|first~'_name')|upper, sortie.etat) }}
+                    </td>
+                    <td id="inscrit_{{ sortie.id }}">{{ app.user in sortie.participants ? 'X' : '' }}</td>
+                    <td>{{ sortie.organisateur.pseudo }}</td>
+                    <td>
+                        {% if is_granted('edit', sortie) and
+                            workflow_has_marked_place(sortie, constant('CREATION', sortie.etat)) %}
+                            <a href="{{ path('create_modification', {'id':sortie.id}) }}" id="modification_{{ sortie.id }}">Modifier</a>
+                        {% else %}
+                            <a href="{{ path('sorties_details', {'id':sortie.id })}}">Afficher</a>
+                        {% endif %}
 
 
 
-                    <!-- https://symfony.com/doc/current/workflow.html#usage-in-twig -->
-                    {% if workflow_can(sortie,constant('TRANS_PUBLICATION', sortie.etat)) and
-                        app.user == sortie.organisateur %}
-                        <a href="#" id="publication_{{ sortie.id }}" class="publication">Publier</a>
-                    {% endif %}
+                        <!-- https://symfony.com/doc/current/workflow.html#usage-in-twig -->
+                        {% if workflow_can(sortie,constant('TRANS_PUBLICATION', sortie.etat)) and
+                            app.user == sortie.organisateur %}
+                            <a href="#" id="publication_{{ sortie.id }}" class="publication">Publier</a>
+                        {% endif %}
 
-                    {% if workflow_can(sortie,constant('TRANS_ANNULATION',sortie.etat)) and
-                        app.user == sortie.organisateur %}
-                        <a href="{{ path('create_annulation', {'id':sortie.id}) }}" id="annulation_{{ sortie.id }}" class="annulation">Annuler</a>
-                    {% endif %}
+                        {% if workflow_can(sortie,constant('TRANS_ANNULATION',sortie.etat)) and
+                            app.user == sortie.organisateur %}
+                            <a href="{{ path('create_annulation', {'id':sortie.id}) }}" id="annulation_{{ sortie.id }}" class="annulation">Annuler</a>
+                        {% endif %}
 
-                    {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) %}
-                        <a href="#" id="inscription_{{ sortie.id }}" class="inscription">S'inscrire</a>
-                    {% endif %}
+                        {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) %}
+                            <a href="#" id="inscription_{{ sortie.id }}" class="inscription">S'inscrire</a>
+                        {% endif %}
 
-                    {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) or
-                          workflow_has_marked_place(sortie, constant('EN_COURS', sortie.etat)) or
-                          workflow_has_marked_place(sortie, constant('CLOTUREE', sortie.etat)) %}
-                        <a href="#" id="desistement_{{ sortie.id }}" class="desistement">Se désister</a>
-                    {% endif %}
-                    <!-- Show/hide boutons inscription/désistement -->
-                    <script>
-                        hideButton("inscription_{{ sortie.id }}",{{ app.user in sortie.participants ? true : false }})
-                        hideButton("desistement_{{ sortie.id }}",{{ app.user in sortie.participants ? false : true }})
-                    </script>
-                </td>
-            </tr>
-
+                        {% if workflow_has_marked_place(sortie, constant('OUVERTE', sortie.etat)) or
+                              workflow_has_marked_place(sortie, constant('EN_COURS', sortie.etat)) or
+                              workflow_has_marked_place(sortie, constant('CLOTUREE', sortie.etat)) %}
+                            <a href="#" id="desistement_{{ sortie.id }}" class="desistement">Se désister</a>
+                        {% endif %}
+                        <!-- Show/hide boutons inscription/désistement -->
+                        <script>
+                            hideButton("inscription_{{ sortie.id }}",{{ app.user in sortie.participants ? true : false }})
+                            hideButton("desistement_{{ sortie.id }}",{{ app.user in sortie.participants ? false : true }})
+                        </script>
+                    </td>
+                </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>
