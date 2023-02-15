@@ -31,6 +31,9 @@ class SortieVoter extends Voter
     {
         $user = $token->getUser();
 
+        if(in_array('ROLE_ADMIN', $user->getRoles()))
+            return true;
+
         if (!$user instanceof Participant) //L'utilisateur doit être connecté
             return false;
 
