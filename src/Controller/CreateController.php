@@ -103,34 +103,34 @@ class CreateController extends AbstractController
                                Security $security,
                                EntityManagerInterface $entityManager,
                                SortieRepository $sortieRepository,
-                               EtatWorkflow $etatWorkflow,
-                               EtatRepository $etatRepository): Response
+                               EtatWorkflow $etatWorkflow): Response
     {
         $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
       
-        $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
+        $this->denyAccessUnlessGranted(SortieVoter::REMOVE, $sortie);
 
         $prevInfo = 'Description initiale : '.$sortie->getInfosSortie();
         $sortieForm = $this->createForm(CreateType::class, $sortie);
         $sortieForm->handleRequest($request);
-        if($etatWorkflow->canTransition($sortie,Etat::TRANS_ANNULATION)){
-            if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            // Suppression de la sortie si en cours de création
+            if ($etatWorkflow->getEtat($sortie) == Etat::CREATION) {
+                $entityManager->remove($sortie);
+            } else {
                 $etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION);
                 $sortie->setInfosSortie('Sortie annulée pour le motif suivant : '.$sortieForm["infosSortie"]->getData(). ' '. $prevInfo);
                 $entityManager->persist($sortie);
                 $entityManager->flush();
-
-                $this->addFlash('success', 'Annulation effectuée !');
-                return $this->redirectToRoute('create_modification', ['id' => $id]);
             }
-            return $this->render('sorties/annulation.html.twig', [
-                'sortieForm' => $sortieForm->createView(),
-                "sortie" => $sortie
-            ]);
-        }else{
-            $this->addFlash('error', 'No bueno !');
-            return $this->redirectToRoute('sorties_list');
+
+            $this->addFlash('success', 'Annulation effectuée !');
+            return $this->redirectToRoute('create_modification', ['id' => $id]);
         }
+        return $this->render('sorties/annulation.html.twig', [
+            'sortieForm' => $sortieForm->createView(),
+            "sortie" => $sortie
+        ]);
     }
 }
