@@ -49,6 +49,7 @@ function togglePublication(url, id) {
                 if(result.etat)
                     $("#etat_" + id).text(result.etat);
                 $("#publication_" + id).hide();
+                $("#modification_" + id).hide();
             } else {
                 $("#publication_" + id).show();
             }

@@ -13,7 +13,7 @@
 {% block body %}
     {% if sortie.id%}
         <h2 class="h3 mb-3 font-weight-normal">Modifier la sortie {{ sortie.nom }}</h2>
-        <p class="h5 mb-3">Statut de la sortie : {{ sortie.etat.libelle }}</p>
+        <p class="h5 mb-3">Statut de la sortie : {{ constant((workflow_marked_places(sortie)|first~'_name')|upper, sortie.etat) }}</p>
     {% else %}
         <h2 class="h3 mb-3 font-weight-normal">Créer une sortie</h2>
     {% endif %}
@@ -42,7 +42,7 @@
     </div>
     <button type="submit" name="submit" value="enregistrer" class="btn btn-primary">Enregistrer</button>
     <button type="submit" name="submit" value="publier" class="btn btn-primary">Publier</button>
-    {% if sortie.id and sortie.etat.libelle == 'ouverte' or sortie.etat.libelle == 'cloturée' %}
+    {% if sortie.id and workflow_can(sortie, constant('TRANS_ANNULATION',sortie.etat)) %}
         <a href="{{ path('create_annulation', {'id':sortie.id })}}"><button type="button" class="btn btn-primary">Annuler</button></a>
     {% endif %}
     {{ form_end(sortieForm) }}
