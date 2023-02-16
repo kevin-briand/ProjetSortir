@@ -7,6 +7,7 @@ use App\Entity\Participant;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,7 +19,7 @@ class ProfileType extends AbstractType
             ->add('pseudo')
             ->add('nom')
             ->add('prenom')
-            ->add('telephone')
+            ->add('telephone', TelType::class)
             ->add('mail')
             ->add('campus', EntityType::class, [
                 'disabled' => true,
