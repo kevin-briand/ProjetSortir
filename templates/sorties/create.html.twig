@@ -82,11 +82,11 @@
         $lieu.change(updateCoordinates);
         ville.addEventListener('change', updateLieux);
 
-        let id = {{ sortie.lieu.id }};
+        let id = {{ sortie.lieu.id ?? -1 }};
         console.log(id);
 
         function updateCoordinates(){
-            if(id === null) {
+            if(id === null || id === -1) {
                 id = $lieu.val();
             } else {
                 $lieu.val(id);
@@ -100,11 +100,9 @@
 
         }
 
-        {% if sortie.lieu %}
         $(document).ready(() => {
             updateLieux();
         });
-        {% endif %}
     </script>
 
 {% endblock %}
