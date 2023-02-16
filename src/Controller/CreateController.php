@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 //use JMS\Serializer\Serializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,7 +56,7 @@ class CreateController extends AbstractController
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             //seul souci qui coince : récupérer l'ID envoyé par le formulaire pour pouvoir le glisser dans l'obj juste avant l'envoi
-           // $sortie->setLieu($lieuRepository->findOneBy(['id' => 0]));
+            $sortie->setLieu($lieuRepository->findOneBy(['id' => $request->request->all()['create']['lieu']]));
             $entityManager->persist($sortie);
             $entityManager->flush();
 
@@ -85,10 +86,15 @@ class CreateController extends AbstractController
     {
         $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
-
+        $toto = $sortie->getLieu()->getNom();
+        $sortie->setLieu(null);
         $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
 
         $sortieForm = $this->createForm(CreateType::class, $sortie);
+        $sortieForm->add('lieu', ChoiceType::class, [
+            'choices' => [$toto => $toto],
+            'disabled' => true,
+        ] );
 
         $sortieForm->handleRequest($request);
 

@@ -57,6 +57,7 @@
                 url : "{{ path('create_lieux') }}", //on envoie l'id par là > trouve la ville > retourne lieux associés
                 data : {id: $ville.value},
                 success: function (result) {
+                    console.log(result)
                     //ici ça nous renvoie la liste des lieux associés à la ville
                     for (let x in result.lieux) {
                         data2[(result.lieux[x].id)] = result.lieux[x].nom;

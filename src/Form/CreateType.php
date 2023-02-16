@@ -62,7 +62,6 @@ class CreateType extends AbstractType
             ])
             ->add('lieu', ChoiceType::class, [
                 'label' => "Lieu :",
-                'mapped' => false,
                 //en gros where lieu getville = ville id
                 'disabled' => true
                 //data ?
