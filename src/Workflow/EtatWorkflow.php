@@ -50,19 +50,19 @@ class EtatWorkflow
                 $this->etatSortieStateMachine->apply($sortie,Etat::TRANS_CLOTURE);
             }
             //Si la sortie a commencée
-            elseif ($this->etatSortieStateMachine->can($sortie,Etat::TRANS_SORTIE_EN_COURS) &&
+            if ($this->etatSortieStateMachine->can($sortie,Etat::TRANS_SORTIE_EN_COURS) &&
                 $sortie->getDateHeureDebut() <= $dateActuelle)
             {
                 $this->etatSortieStateMachine->apply($sortie,Etat::TRANS_SORTIE_EN_COURS);
             }
             //Si la sortie est terminée
-            elseif ($this->etatSortieStateMachine->can($sortie,Etat::TRANS_SORTIE_TERMINEE) &&
+            if ($this->etatSortieStateMachine->can($sortie,Etat::TRANS_SORTIE_TERMINEE) &&
                 $dateFinSortie <= $dateActuelle)
             {
                 $this->etatSortieStateMachine->apply($sortie,Etat::TRANS_SORTIE_TERMINEE);
             }
             //Si la sortie est terminée depuis plus d'un mois
-            elseif ($this->etatSortieStateMachine->can($sortie,Etat::TRANS_ARCHIVAGE) &&
+            if ($this->etatSortieStateMachine->can($sortie,Etat::TRANS_ARCHIVAGE) &&
                 $dateArchivage <= $dateActuelle)
             {
                 $this->etatSortieStateMachine->apply($sortie,Etat::TRANS_ARCHIVAGE);
