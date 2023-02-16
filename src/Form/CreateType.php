@@ -33,7 +33,7 @@ class CreateType extends AbstractType
                 'widget' => 'single_text',
                 'label' => 'Date limite d\'inscription :'
             ])
-            ->add('nbInscriptionsMax', TextType::class, [
+            ->add('nbInscriptionsMax', NumberType::class, [
                 'label' => 'Nombre de places :'
             ])
             ->add('duree', NumberType::class, [
