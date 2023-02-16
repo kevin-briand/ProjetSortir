@@ -47,4 +47,69 @@
         <a href="{{ path('create_annulation', {'id':sortie.id })}}"><button type="button" class="btn btn-primary">Annuler</button></a>
     {% endif %}
     {{ form_end(sortieForm) }}
+
+    <script>
+        let dataVille = {};
+        let listeLieux = {};
+        let $ville = document.getElementById("create_ville");
+        $ville.addEventListener('change',function () {
+            console.log($ville.value)
+            $.ajax({
+                method : "POST",
+                url : "{{ path('create_lieux') }}", //on envoie l'id par là > trouve la ville > retourne lieux associés
+                data : {id: $ville.value},
+                success: function (result) {
+                    dataVille = result;
+                    //ici ça nous renvoie la liste des lieux associés à la ville
+                    for (let x in result.lieux) {
+                        listeLieux[(result.lieux[x].id)] = result.lieux[x].nom;
+                    }
+                    let options = "";
+                    result.lieux.map(place => {
+                        options += `<option value="${place.id}">${place.nom}</option>`
+                    });
+                    document.getElementById('create_lieu').innerHTML = options;
+                    document.getElementById('create_codePostal').value = dataVille.codePostal;
+                    document.getElementById('create_lieu').disabled = false;
+                    updateCoordinates();
+                    /* no bueno, issu du tuto sur les formEvents
+                    var placesData = {};
+                    for (let resultKey in result) {
+                        console.log();
+                    }
+                    console.log(placesData)
+                    $('#create_lieu').append(
+                        $(result).find('#create_lieu')
+                    );*/
+                }
+            });
+        });
+        let $lieu = $('#create_lieu');
+        $lieu.change(updateCoordinates);
+        function updateCoordinates(){
+            let placeDetails = dataVille.lieux.find(lieu => lieu.id == $lieu.val());
+            document.getElementById('create_rue').value = placeDetails.rue;
+            document.getElementById('create_latitude').value = placeDetails.latitude;
+            document.getElementById('create_longitude').value = placeDetails.longitude;
+            //var $form = $(this).closest('form');
+            // Simulate form data, but only include the selected lieu value.
+            /*let datas = {};
+            datas[$lieu.attr('name')] = $lieu.val();
+            console.log(datas);
+            /* Submit data via AJAX to the form's action path.
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                data: data2,
+                complete: function (html) {
+                    /*  // Replace current position field ...
+                      $('#create_lieu').replaceWith(
+                          // ... with the returned one from the AJAX response.
+                          $(html.responseText).find('#create_lieu')
+                      )
+                }
+            });*/
+        }
+    </script>
+
 {% endblock %}

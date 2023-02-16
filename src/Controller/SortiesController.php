@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Component\FilterRequest;
 use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Form\FilterType;
@@ -30,18 +31,13 @@ class SortiesController extends AbstractController
     {
 
         $this->denyAccessUnlessGranted(SortieVoter::VIEW,new Sortie);
-
-        $sortiesFilter = $this->createForm(FilterType::class);
-
-        if($request->get('submit') != "annuler")
-            $sortiesFilter->handleRequest($request);
-
-
+        $filtre = new FilterRequest();
+        $filtre->campus = $this->getUser()->getCampus();
+        $sortiesFilter = $this->createForm(FilterType::class, $filtre);
+        $sortiesFilter->handleRequest($request);
          if($sortiesFilter->isSubmitted() && $sortiesFilter->isValid())
         {
-            $usrID = $user->getId();
-            $datas = $sortiesFilter->getData();
-            $sorties = $sortieRepository->filterBy($datas, $usrID);
+            $sorties = $sortieRepository->filterBy($filtre, $this->getUser());
         } else {
             $sorties = $sortieRepository->findAllSorties();
         }
