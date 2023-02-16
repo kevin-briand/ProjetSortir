@@ -9,6 +9,7 @@ use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -59,14 +60,13 @@ class CreateType extends AbstractType
                 'class' => Ville::class,
                 'choice_label' => 'nom'
             ])
-            /*
-            ->add('lieu', EntityType::class, [
+            ->add('lieu', ChoiceType::class, [
                 'label' => "Lieu :",
-                'class' => Lieu::class,
-                'choice_label' => 'nom',
+                'mapped' => false,
                 //en gros where lieu getville = ville id
                 'disabled' => true
-            ])*/
+                //data ?
+            ])
             ->add('rue', null, [
                 'mapped' => false,
                 'label' => "Rue :",
@@ -86,35 +86,37 @@ class CreateType extends AbstractType
                 'label' => 'Longitude :'
             ])
         ;
-//partie tuto form events p-ê useless
-        //nous permet d'ajouter la liste des lieux selon la ville choisie
-        $formModifier = function (FormInterface $form, Ville $ville = null, Lieu $lieu = null){
+
+        //nous permet d'ajouter en back la liste des lieux selon la ville choisie
+        $formModifier = function (FormInterface $form, int $choices = null){
             //avec le post qu'on a fait à côté,
             //c'est ici que l'on veut qu'il aille nous récup les lieux dont la ville matche le choix fait dans le form
-            $lieux = null === $lieu ? [] : $ville->getLieux();
-            $form->add('lieu', EntityType::class, [
-                'label' => "Lieu :",
-                'class' => Lieu::class,
-                'choices' => $lieux,
+            //$lieux = null === $lieu ? [] : $ville->getLieux();
+            $form->add('lieu', ChoiceType::class, [
+                'label' => 'Lieu :',
+                'choices' => $choices,
+                //en gros where lieu getville = ville id
+                'disabled' => true
             ]);
         };
-        //permet de préparer le terrain au chargement de la page
+        //permet de préparer le terrain au chargement de la page : au début ça init choix vide via methode formModifier
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) use ($formModifier){
                 $data = $event->getData();
-                $formModifier($event->getForm(), $data->getLieu());
+                $formModifier($event->getForm());// $data->getLieu());
             }
         );
-        //permet de récup notre ajax après choix de la ville => rebond vers la méthode formModifier avec params
-        $builder->get('ville')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function(FormEvent $event) use ($formModifier){
-                $ville = $event->getForm()->getData();
+        //après choix du lieu => rebond vers la méthode formModifier avec params envoyés pour update les choix en back
+       $builder->get('lieu')->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function(FormEvent $event) use ($formModifier) { //use ($formModifier){
+                $choices = $event->getForm()->getData();
                 //en gros ce serait ici qu'on viendrait fetch nos lieux depuis le json ?
-                $formModifier($event->getForm()->getParent(), $ville);
+                $formModifier($event->getForm()->getParent(), $choices);
             }
         );
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

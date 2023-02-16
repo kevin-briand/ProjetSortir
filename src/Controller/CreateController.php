@@ -13,6 +13,7 @@ use App\Repository\VilleRepository;
 use App\Security\SortieVoter;
 use App\Workflow\EtatWorkflow;
 use Doctrine\ORM\EntityManagerInterface;
+//use JMS\Serializer\Serializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,6 +36,7 @@ class CreateController extends AbstractController
     public function create(Request $request,
                            EntityManagerInterface $entityManager,
                            EtatRepository $etatRepository,
+                           LieuRepository $lieuRepository,
                            EtatWorkflow $etatWorkflow): Response
     {
         $sortie = new Sortie();
@@ -52,6 +54,8 @@ class CreateController extends AbstractController
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            //seul souci qui coince : récupérer l'ID envoyé par le formulaire pour pouvoir le glisser dans l'obj juste avant l'envoi
+           // $sortie->setLieu($lieuRepository->findOneBy(['id' => 0]));
             $entityManager->persist($sortie);
             $entityManager->flush();
 
@@ -75,6 +79,7 @@ class CreateController extends AbstractController
                                  Request $request,
                                  Security $security,
                                  EntityManagerInterface $entityManager,
+                                 LieuRepository $lieuRepository,
                                  EtatWorkflow $etatWorkflow,
                                  SortieRepository $sortieRepository): Response
     {
@@ -150,13 +155,10 @@ class CreateController extends AbstractController
         $json = $this->isJSONDatasValid($request);
 
         $ville = $villeRepository->find($request->request->get('id'));
-        /*$lieu = $lieuRepository->findBy(['ville' => $ville ]); //seul moyen d'avoir les datas des lieux
-        $spots = null;
-        foreach ($lieu as $lie){
-            $spots =+ [$lie->getId() => $lie->getNom()];
-        }
+        $lieu = $lieuRepository->findBy(['ville' => $ville ]); //seul moyen d'avoir les datas des lieux
+
        //$lieux = $ville->getLieux();
-        $json = json_encode();
+      //  $json = json_encode();
         //return new JsonResponse($json);/*/
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
