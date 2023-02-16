@@ -120,37 +120,30 @@ class CreateController extends AbstractController
                                LieuRepository $lieuRepository,
                                EtatWorkflow $etatWorkflow): Response
     {
-        $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
         $prevInfo = 'Description initiale : '.$sortie->getInfosSortie();
-        $prevLieu = $sortie->getLieu();
-        $rustine = $sortie->getLieu()->getNom();
-        $sortie->setLieu(null);
 
         $this->denyAccessUnlessGranted(SortieVoter::REMOVE, $sortie);
 
-
         $sortieForm = $this->createForm(CreateType::class, $sortie);
-        $sortieForm->add('lieu', ChoiceType::class, [
-            'choices' => [$rustine => $rustine],
-            'disabled' => true,
-        ] );
-        $sortie->setLieu($prevLieu);
+
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             // Suppression de la sortie si en cours de création
             if ($etatWorkflow->getEtat($sortie) == Etat::CREATION) {
                 $entityManager->remove($sortie);
+                $entityManager->flush();
+                $this->addFlash('success', 'Annulation effectuée !');
+                return $this->redirectToRoute('sorties_list', ['id' => $id]);
             } else {
                 $etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION);
                 $sortie->setInfosSortie('Sortie annulée pour le motif suivant : '.$sortieForm["infosSortie"]->getData(). ' '. $prevInfo);
                 $entityManager->persist($sortie);
                 $entityManager->flush();
+                $this->addFlash('success', 'Annulation effectuée !');
+                return $this->redirectToRoute('sorties_details', ['id' => $id]);
             }
-
-            $this->addFlash('success', 'Annulation effectuée !');
-            return $this->redirectToRoute('sorties_details', ['id' => $id]);
         }
         return $this->render('sorties/annulation.html.twig', [
             'sortieForm' => $sortieForm->createView(),
