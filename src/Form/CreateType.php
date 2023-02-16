@@ -71,10 +71,12 @@ class CreateType extends AbstractType
             ])
             ->add('latitude', null, [
                 'mapped' => false,
+                'disabled' => true,
                 'label' => 'Latitude :'
             ])
             ->add('longitude', null, [
                 'mapped' => false,
+                'disabled' => true,
                 'label' => 'Longitude :'
             ])
         ;
