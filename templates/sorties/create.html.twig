@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme sortieForm 'bootstrap_5_layout.html.twig' %}
+
 {% block title %}
     {% if sortie.id%}
         Sortie {{ sortie.nom}} | {{ parent() }}
@@ -8,7 +10,6 @@
     {% endif %}
 {% endblock %}
 
-{% form_theme sortieForm 'bootstrap_5_layout.html.twig' %}
 
 {% block body %}
     {% if sortie.id%}

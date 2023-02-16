@@ -1,11 +1,26 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme participantForm 'bootstrap_5_layout.html.twig' %}
+
 {% block body %}
     <h2 class="h3 mb-3 font-weight-normal">Mon profil</h2>
 
-    {% form_theme participantForm 'bootstrap_5_layout.html.twig' %}
+
     {{ form_start(participantForm) }}
-    {{ form_widget(participantForm) }}
+    <div class="row" style="padding: 0 40px">
+        <div class="col">
+            {{ form_row(participantForm.pseudo) }}
+            {{ form_row(participantForm.nom) }}
+            {{ form_row(participantForm.prenom) }}
+            {{ form_row(participantForm.telephone) }}
+        </div>
+        <div class="col">
+            {{ form_row(participantForm.mail) }}
+            {{ form_row(participantForm.campus) }}
+            {{ form_row(participantForm.newPassword) }}
+            {{ form_row(participantForm.confirmPassword) }}
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary">Enregistrer</button>
     <button type="reset" class="btn btn-primary" id="btn-annuler">Annuler</button>
     {{ form_end(participantForm) }}
