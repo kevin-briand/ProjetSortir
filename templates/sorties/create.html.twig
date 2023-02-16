@@ -70,8 +70,7 @@
                     document.getElementById('create_lieu').innerHTML = options;
                     document.getElementById('create_codePostal').value = dataVille.codePostal;
                     document.getElementById('create_lieu').disabled = false;
-
-
+                    updateCoordinates();
                     /* no bueno, issu du tuto sur les formEvents
                     var placesData = {};
                     for (let resultKey in result) {
@@ -85,7 +84,8 @@
             });
         });
         let $lieu = $('#create_lieu');
-        $lieu.change(function (){
+        $lieu.change(updateCoordinates);
+        function updateCoordinates(){
             let placeDetails = dataVille.lieux.find(lieu => lieu.id == $lieu.val());
             document.getElementById('create_rue').value = placeDetails.rue;
             document.getElementById('create_latitude').value = placeDetails.latitude;
@@ -108,7 +108,7 @@
                       )
                 }
             });*/
-        })
+        }
     </script>
 
 {% endblock %}

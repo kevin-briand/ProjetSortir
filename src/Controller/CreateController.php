@@ -99,6 +99,7 @@ class CreateController extends AbstractController
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            $sortie->setLieu($lieuRepository->findOneBy(['id' => $request->request->all()['create']['lieu']]));
             $entityManager->persist($sortie);
             $entityManager->flush();
 
