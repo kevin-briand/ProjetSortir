@@ -86,13 +86,13 @@ class CreateController extends AbstractController
     {
         $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
-        $toto = $sortie->getLieu()->getNom();
+        $rustine = $sortie->getLieu()->getNom();
         $sortie->setLieu(null);
         $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
 
         $sortieForm = $this->createForm(CreateType::class, $sortie);
         $sortieForm->add('lieu', ChoiceType::class, [
-            'choices' => [$toto => $toto],
+            'choices' => [$rustine => $rustine],
             'disabled' => true,
         ] );
 
@@ -122,15 +122,25 @@ class CreateController extends AbstractController
                                Security $security,
                                EntityManagerInterface $entityManager,
                                SortieRepository $sortieRepository,
+                               LieuRepository $lieuRepository,
                                EtatWorkflow $etatWorkflow): Response
     {
         $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
-      
+        $prevInfo = 'Description initiale : '.$sortie->getInfosSortie();
+        $prevLieu = $sortie->getLieu();
+        $rustine = $sortie->getLieu()->getNom();
+        $sortie->setLieu(null);
+
         $this->denyAccessUnlessGranted(SortieVoter::REMOVE, $sortie);
 
-        $prevInfo = 'Description initiale : '.$sortie->getInfosSortie();
+
         $sortieForm = $this->createForm(CreateType::class, $sortie);
+        $sortieForm->add('lieu', ChoiceType::class, [
+            'choices' => [$rustine => $rustine],
+            'disabled' => true,
+        ] );
+        $sortie->setLieu($prevLieu);
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
