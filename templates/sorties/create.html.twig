@@ -39,6 +39,7 @@
             {{ form_row(sortieForm.codePostal) }}
             {{ form_row(sortieForm.latitude) }}
             {{ form_row(sortieForm.longitude) }}
+
         </div>
     </div>
     <button type="submit" name="submit" value="enregistrer" class="btn btn-primary">Enregistrer</button>
@@ -51,13 +52,13 @@
     <script>
         let dataVille = {};
         let listeLieux = {};
-        let $ville = document.getElementById("create_ville");
-        $ville.addEventListener('change',function () {
-            console.log($ville.value)
+        let ville = document.getElementById("create_ville");
+        ville.addEventListener('change',function () {
+            console.log(ville.value)
             $.ajax({
                 method : "POST",
                 url : "{{ path('create_lieux') }}", //on envoie l'id par là > trouve la ville > retourne lieux associés
-                data : {id: $ville.value},
+                data : {id: ville.value},
                 success: function (result) {
                     dataVille = result;
                     //ici ça nous renvoie la liste des lieux associés à la ville
@@ -87,12 +88,19 @@
         let $lieu = $('#create_lieu');
         $lieu.change(updateCoordinates);
         function updateCoordinates(){
-            let placeDetails = dataVille.lieux.find(lieu => lieu.id == $lieu.val());
+            let placeDetails = dataVille.lieux.find(lieu => lieu.id === $lieu.val());
             document.getElementById('create_rue').value = placeDetails.rue;
             document.getElementById('create_latitude').value = placeDetails.latitude;
             document.getElementById('create_longitude').value = placeDetails.longitude;
 
         }
+
+        {% if sortie.lieu %}
+        console.log('Test');
+        $(document).ready(() => {
+
+        });
+        {% endif %}
     </script>
 
 {% endblock %}

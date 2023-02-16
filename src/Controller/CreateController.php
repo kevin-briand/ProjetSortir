@@ -86,20 +86,15 @@ class CreateController extends AbstractController
     {
         $user = $security->getUser();
         $sortie = $sortieRepository->find($id);
-        $rustine = $sortie->getLieu()->getNom();
-        $sortie->setLieu(null);
+
         $this->denyAccessUnlessGranted(SortieVoter::EDIT, $sortie);
 
         $sortieForm = $this->createForm(CreateType::class, $sortie);
-        $sortieForm->add('lieu', ChoiceType::class, [
-            'choices' => [$rustine => $rustine],
-            'disabled' => true,
-        ] );
 
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-            $sortie->setLieu($lieuRepository->findOneBy(['id' => $request->request->all()['create']['lieu']]));
+            //$sortie->setLieu($lieuRepository->findOneBy(['id' => $request->request->all()['create']['lieu']]));
             $entityManager->persist($sortie);
             $entityManager->flush();
 
@@ -112,7 +107,7 @@ class CreateController extends AbstractController
 
         return $this->render('sorties/create.html.twig', [
                 'sortieForm' => $sortieForm->createView(),
-                "sortie" => $sortie
+                'sortie' => $sortie
             ]);
     }
 

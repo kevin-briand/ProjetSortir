@@ -55,11 +55,14 @@ class CreateType extends AbstractType
                 'label' => "Ville :",
                 'mapped' => false,
                 'class' => Ville::class,
-                'choice_label' => 'nom'
+                'choice_label' => 'nom',
+                'data' => $builder->getData()->getLieu() ? $builder->getData()->getLieu()->getVille() : null
             ])
-            ->add('lieu', ChoiceType::class, [
+            ->add('lieu', EntityType::class, [
                 'label' => "Lieu :",
-                'disabled' => true
+                'class' => Lieu::class,
+                'choice_label' => 'nom',
+                'data' => $builder->getData()->getLieu()
             ])
             ->add('rue', null, [
                 'mapped' => false,

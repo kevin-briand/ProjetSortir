@@ -44,6 +44,21 @@ class SortieRepository extends ServiceEntityRepository
         }
     }
 
+    public function findSortie($id)
+    {
+        $queryBuilder = $this->createQueryBuilder('sortie');
+
+        $queryBuilder
+            ->leftJoin('sortie.participants', 'participants')->addSelect('participants')
+            ->leftJoin('sortie.etat', 'etat')->addSelect('etat')
+            ->leftJoin('sortie.lieu', 'lieu')->addSelect('lieu')
+            ->leftJoin('sortie.organisateur', 'organisateur')->addSelect('organisateur')
+            ->andWhere('sortie.id = :id')->setParameter('id',$id);
+        $query = $queryBuilder->getQuery();
+
+        $paginator = new Paginator($query);
+        return $paginator->getIterator()[0];
+    }
     public function findAllSorties()
     {
         $queryBuilder = $this->createQueryBuilder('sortie');
