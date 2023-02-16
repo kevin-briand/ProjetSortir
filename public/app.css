@@ -56,7 +56,7 @@ main {
 
 input, select, textarea {
     max-width: 50% !important;
-    margin: 1rem auto 2rem !important;
+    margin: 1rem auto 1rem !important;
 }
 
 .no-margin {
