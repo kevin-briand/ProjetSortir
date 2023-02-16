@@ -51,12 +51,12 @@ class SortieVoter extends Voter
         };
     }
 
-    private function canView(Sortie $sortie, Participant $user)
+    private function canView(Sortie $sortie, Participant $user): bool
     {
         return true;
     }
 
-    private function canEdit(Sortie $sortie, Participant $user)
+    private function canEdit(Sortie $sortie, Participant $user): bool
     {
         if($sortie->getOrganisateur() !== $user || $this->etatWorkflow->getEtat($sortie) !==  Etat::CREATION)
             return false;
@@ -64,12 +64,12 @@ class SortieVoter extends Voter
         return true;
     }
 
-    private function canRemove(Sortie $sortie, Participant $user)
+    private function canRemove(Sortie $sortie, Participant $user): bool
     {
-        if($sortie->getOrganisateur() !== $user &&
+        if($sortie->getOrganisateur() === $user &&
             $this->etatWorkflow->canTransition($sortie, Etat::TRANS_ANNULATION))
-            return false;
+            return true;
 
-        return true;
+        return false;
     }
 }
