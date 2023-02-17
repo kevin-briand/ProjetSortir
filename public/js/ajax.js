@@ -61,13 +61,13 @@ function setMessageBox(json) {
     const messageBox = $("#messages");
     let isOk = false;
     if (json.info) {
-        messageBox.addClass("alert alert-success");
-        messageBox.removeClass("alert-danger");
+        messageBox.addClass("flash flash-success");
+        messageBox.removeClass("flash-danger");
         messageBox.text(json.info);
         isOk = true;
     } else {
-        messageBox.addClass("alert alert-danger");
-        messageBox.removeClass("alert-success");
+        messageBox.addClass("flash flash-danger");
+        messageBox.removeClass("flash-success");
         messageBox.text(json.error);
     }
     messageBox.show();
