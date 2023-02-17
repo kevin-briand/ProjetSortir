@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Component\FilterRequest;
 use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Form\FilterType;
@@ -25,23 +26,21 @@ class SortiesController extends AbstractController
 
     #[Route('/', name: 'list')]
     public function list(SortieRepository $sortieRepository,
-                         Request          $request, UserInterface $user,
+                         Request          $request,
                          EtatWorkflow     $etatWorkflow): Response
     {
 
         $this->denyAccessUnlessGranted(SortieVoter::VIEW,new Sortie);
 
-        $sortiesFilter = $this->createForm(FilterType::class);
-
+        $filtre = new FilterRequest();
+        $filtre->campus = $this->getUser()->getCampus();
+        $sortiesFilter = $this->createForm(FilterType::class, $filtre);
         if($request->get('submit') != "annuler")
             $sortiesFilter->handleRequest($request);
-
-
+            
          if($sortiesFilter->isSubmitted() && $sortiesFilter->isValid())
         {
-            $usrID = $user->getId();
-            $datas = $sortiesFilter->getData();
-            $sorties = $sortieRepository->filterBy($datas, $usrID);
+            $sorties = $sortieRepository->filterBy($filtre, $this->getUser());
         } else {
             $sorties = $sortieRepository->findAllSorties();
         }
@@ -115,7 +114,7 @@ class SortiesController extends AbstractController
 
         if (!$sortie->getParticipants()->contains($user)) {
             $json['error'] = "le désistement à la sortie à " . $sortie->getNom() . " échoué ! (vous ne participez pas à la sortie)";
-        } elseif ($etatWorkflow->getEtat($sortie) !== Etat::EN_COURS &&
+        } elseif ($etatWorkflow->getEtat($sortie) !== Etat::OUVERTE &&
             $etatWorkflow->getEtat($sortie) !== Etat::CLOTUREE) {
             $json['error'] = "le désistement à la sortie à " . $sortie->getNom() . " échoué ! (la sortie ne peux pas être modifiée)";
         } else {
@@ -170,40 +169,6 @@ class SortiesController extends AbstractController
 
         return new JsonResponse($json);
     }
-
-    #[Route('/annuler/', name: 'annuler')]
-    public function annuler(SortieRepository       $sortieRepository,
-                            Request                $request,
-                            Security               $security,
-                            EtatWorkflow           $etatWorkflow,
-                            EntityManagerInterface $entityManager): JsonResponse
-    {
-        $sortie = $sortieRepository->find($request->request->get('id'));
-        $this->denyAccessUnlessGranted(SortieVoter::VIEW,$sortie);
-
-        $user = $security->getUser();
-        $json = $this->isJSONDatasValid($request, $user);
-
-        if ($etatWorkflow->canTransition($sortie, Etat::TRANS_ANNULATION) &&
-            $sortie->getOrganisateur() === $user) {
-            if ($etatWorkflow->getEtat($sortie) == Etat::CREATION) {
-                $entityManager->remove($sortie);
-            } else {
-                if(!$etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION))
-                    throw new \LogicException("Echec de changement de transition !");
-                else {
-                    $json['etat'] = $etatWorkflow->getEtatName($sortie);
-                }
-            }
-            $entityManager->flush();
-            $json['info'] = "La sortie " . $sortie->getNom() . " à été annulée !";
-        } else {
-            $json['error'] = "La sortie " . $sortie->getNom() . " n'a pas pu être annulée";
-        }
-
-        return new JsonResponse($json);
-    }
-
 
     private function isJSONDatasValid(Request $request, null|UserInterface $user): array
     {

@@ -5,8 +5,11 @@ namespace App\Form;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Ville;
+use App\Repository\VilleRepository;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -52,12 +55,14 @@ class CreateType extends AbstractType
                 'label' => "Ville :",
                 'mapped' => false,
                 'class' => Ville::class,
-                'choice_label' => 'nom'
+                'choice_label' => 'nom',
+                'data' => $builder->getData()->getLieu() ? $builder->getData()->getLieu()->getVille() : null
             ])
             ->add('lieu', EntityType::class, [
                 'label' => "Lieu :",
                 'class' => Lieu::class,
-                'choice_label' => 'nom'
+                'choice_label' => 'nom',
+                'data' => $builder->getData()->getLieu()
             ])
             ->add('rue', null, [
                 'mapped' => false,
