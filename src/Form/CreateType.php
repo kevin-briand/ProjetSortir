@@ -40,7 +40,8 @@ class CreateType extends AbstractType
                 'label' => 'Nombre de places :'
             ])
             ->add('duree', NumberType::class, [
-                'html5' => true
+                'html5' => true,
+                'label' => 'Durée :'
             ])
             ->add('infosSortie', TextType::class, [
                 'label' => 'Description et infos :'

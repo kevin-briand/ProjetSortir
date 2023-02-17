@@ -31,10 +31,13 @@ class SortiesController extends AbstractController
     {
 
         $this->denyAccessUnlessGranted(SortieVoter::VIEW,new Sortie);
+
         $filtre = new FilterRequest();
         $filtre->campus = $this->getUser()->getCampus();
         $sortiesFilter = $this->createForm(FilterType::class, $filtre);
-        $sortiesFilter->handleRequest($request);
+        if($request->get('submit') != "annuler")
+            $sortiesFilter->handleRequest($request);
+            
          if($sortiesFilter->isSubmitted() && $sortiesFilter->isValid())
         {
             $sorties = $sortieRepository->filterBy($filtre, $this->getUser());
