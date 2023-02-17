@@ -11,8 +11,6 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main')]
     public function home(): Response
     {
-        return $this->render('main/home.html.twig', [
-            'controller_name' => 'MainController',
-        ]);
+        return $this->redirectToRoute('sorties_list', [], 301);
     }
 }
