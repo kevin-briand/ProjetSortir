@@ -25,8 +25,9 @@
             {{ form_row(sortiesFilter.sortiesPassees) }}
         </div>
     </div>
-    <button class="btn btn-primary mb-3" id="search-sortie-btn">Rechercher</button>
-    <input class="btn btn-primary mb-3" id="search-sortie-btn" type="reset">
+
+    <button class="btn btn-primary mb-3" name="submit" value="envoie" id="search-sortie-btn" type="submit">Rechercher</button>
+    <button class="btn btn-primary mb-3" name="submit" value="annuler" id="search-sortie-btn" type="submit">Effacer</button>
 
     {{ form_end(sortiesFilter) }}
 

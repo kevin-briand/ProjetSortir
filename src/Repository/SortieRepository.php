@@ -2,8 +2,9 @@
 
 namespace App\Repository;
 
+use App\Component\FilterRequest;
+use App\Entity\Participant;
 use App\Entity\Sortie;
-use App\Form\FilterType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -56,16 +57,14 @@ class SortieRepository extends ServiceEntityRepository
         return $paginator;
     }
 
-    public function filterBy($value, $userID)
+    public function filterBy(FilterRequest $value, Participant $user)
     {
-        $campusID = array();
-        foreach ($value->campus as $status) {
-            $campusID[] = $status->getId();
-        }
-
         $queryBuilder = $this->createQueryBuilder('sortie');
-        $queryBuilder->setParameter('campusID', $campusID);
-        $queryBuilder->andWhere('sortie.campus IN (:campusID)');
+        $queryBuilder->setParameter('campus', $value->campus);
+        $queryBuilder->andWhere('sortie.campus = :campus');
+        $queryBuilder->leftJoin('sortie.participants', 'participants')->addSelect('participants');
+        $queryBuilder->join('sortie.etat', 'etat')->addSelect('etat');
+        $queryBuilder->join('sortie.organisateur', 'organisateur')->addSelect('organisateur');
 
 
         if(!empty($value->nom)){
@@ -88,7 +87,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if($value->organisateur !== false){
-            $queryBuilder->setParameter('organizer', $userID)
+            $queryBuilder->setParameter('organizer', $user)
                          ->andWhere('sortie.organisateur = :organizer');
         }
 
@@ -103,8 +102,6 @@ class SortieRepository extends ServiceEntityRepository
                     ->andWhere(':usrID NOT MEMBER OF sortie.participants');
             }
         }
-
-        $queryBuilder->leftJoin('sortie.participants', 'participants')->addSelect('participants');
 
         if($value->sortiesPassees !== false){
             $endDate = new \DateTime('now');

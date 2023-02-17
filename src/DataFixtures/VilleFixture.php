@@ -16,7 +16,7 @@ class VilleFixture extends Fixture
         for ($i = 0; $i < 5; $i++) {
             $ville = new Ville();
             $ville->setNom($faker->city);
-            $ville->setCodePostal(intval($faker->postcode));
+            $ville->setCodePostal($faker->postcode);
             $manager->persist($ville);
         }
 

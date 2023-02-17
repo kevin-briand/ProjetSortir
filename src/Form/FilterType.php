@@ -22,7 +22,6 @@ class FilterType extends AbstractType
                 'class'=>Campus::class,
                 'choice_label' => 'nom',
                 'attr' => ['class'=>'no-margin'],
-                'multiple' => true
             ])
             ->add('nom', TextType::class, [
                 'required'=>false,

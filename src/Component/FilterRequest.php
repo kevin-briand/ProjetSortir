@@ -9,45 +9,21 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class FilterRequest
 {
-    /**
-     * @var Campus
-     */
-    public Campus|ArrayCollection $campus;
+    public ?Campus $campus = null;
 
-    /**
-     * @var string|null
-     */
-    public ?string $nom;
+    public ?string $nom = null;
 
-    /**
-     * @var DateTimeType|null
-     */
-    public ?\DateTimeInterface $dateDebut;
+    public ?\DateTime $dateDebut = null;
 
-    /**
-     * @var DateTimeType|null
-     */
-    public ?\DateTimeInterface $dateFin;
+    public ?\DateTime $dateFin = null;
 
-    /**
-     * @var bool|null
-     */
-    public bool $organisateur;
+    public bool $organisateur = false;
 
-    /**
-     * @var bool|null
-     */
-    public bool $inscrit;
+    public bool $inscrit = false;
 
-    /**
-     * @var bool|null
-     */
-    public bool $nonInscrit;
+    public bool $nonInscrit = false;
 
-    /**
-     * @var bool|null
-     */
-    public bool $sortiesPassees;
+    public bool $sortiesPassees = false;
 
 
 
