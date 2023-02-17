@@ -92,13 +92,13 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if($value->inscrit xor $value->nonInscrit) {
-            if ($value->inscrit !== false && $value->inscrit !== null) {
-                $queryBuilder->setParameter('userID', $userID)
+            if ($value->inscrit !== false) {
+                $queryBuilder->setParameter('userID', $user->getId())
                     ->andWhere(':userID MEMBER OF sortie.participants');
                 //->innerJoin('sortie.participants', 'p','WITH', 'p.id = :userID');
             }
             if ($value->nonInscrit !== false) {
-                $queryBuilder->setParameter('usrID', $userID)
+                $queryBuilder->setParameter('usrID', $user->getId())
                     ->andWhere(':usrID NOT MEMBER OF sortie.participants');
             }
         }
