@@ -108,15 +108,6 @@ class EtatWorkflow
     }
 
     /**
-     * Retourne toutes les transitions possible dans la sortie
-     * @param Sortie $sortie
-     * @return array
-     */
-    public function getTransistions(Sortie $sortie): array {
-        return $this->etatSortieStateMachine->getEnabledTransitions($sortie);
-    }
-
-    /**
      * Retourne le nom de l'état de la sortie
      * @param Sortie $sortie
      * @return string
