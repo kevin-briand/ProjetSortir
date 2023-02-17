@@ -55,7 +55,6 @@
         let ville = document.getElementById("create_ville");
 
         function updateLieux() {
-            //console.log(ville.value)
             $.ajax({
                 method : "POST",
                 url : "{{ path('create_lieux') }}", //on envoie l'id par là > trouve la ville > retourne lieux associés
@@ -73,7 +72,6 @@
                     });
                     document.getElementById('create_lieu').innerHTML = options;
                     document.getElementById('create_codePostal').value = dataVille.codePostal;
-                    //document.getElementById('create_lieu').disabled = false;
                     updateCoordinates();
                 }
             }

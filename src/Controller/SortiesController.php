@@ -26,7 +26,7 @@ class SortiesController extends AbstractController
 
     #[Route('/', name: 'list')]
     public function list(SortieRepository $sortieRepository,
-                         Request          $request, UserInterface $user,
+                         Request          $request,
                          EtatWorkflow     $etatWorkflow): Response
     {
 
@@ -166,40 +166,6 @@ class SortiesController extends AbstractController
 
         return new JsonResponse($json);
     }
-
-    #[Route('/annuler/', name: 'annuler')]
-    public function annuler(SortieRepository       $sortieRepository,
-                            Request                $request,
-                            Security               $security,
-                            EtatWorkflow           $etatWorkflow,
-                            EntityManagerInterface $entityManager): JsonResponse
-    {
-        $sortie = $sortieRepository->find($request->request->get('id'));
-        $this->denyAccessUnlessGranted(SortieVoter::VIEW,$sortie);
-
-        $user = $security->getUser();
-        $json = $this->isJSONDatasValid($request, $user);
-
-        if ($etatWorkflow->canTransition($sortie, Etat::TRANS_ANNULATION) &&
-            $sortie->getOrganisateur() === $user) {
-            if ($etatWorkflow->getEtat($sortie) == Etat::CREATION) {
-                $entityManager->remove($sortie);
-            } else {
-                if(!$etatWorkflow->setEtat($sortie, Etat::TRANS_ANNULATION))
-                    throw new \LogicException("Echec de changement de transition !");
-                else {
-                    $json['etat'] = $etatWorkflow->getEtatName($sortie);
-                }
-            }
-            $entityManager->flush();
-            $json['info'] = "La sortie " . $sortie->getNom() . " à été annulée !";
-        } else {
-            $json['error'] = "La sortie " . $sortie->getNom() . " n'a pas pu être annulée";
-        }
-
-        return new JsonResponse($json);
-    }
-
 
     private function isJSONDatasValid(Request $request, null|UserInterface $user): array
     {
