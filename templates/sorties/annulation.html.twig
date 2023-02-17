@@ -30,7 +30,11 @@
 
             <div class="btn-group gap-2">
                 <button type="submit" class="btn btn-success">Confirmer</button>
-                <a href="{{ path('create_modification', {'id':sortie.id}) }}"><button type="button" class="btn btn-primary ">Retour</button></a>
+                {% if sortie.etat.libelle == 'ouverte' %}
+                    <a href="{{ path('sorties_list') }}"><button type="button" class="btn btn-primary ">Retour</button></a>
+                {% else %}
+                    <a href="{{ path('create_modification', {'id':sortie.id}) }}"><button type="button" class="btn btn-primary ">Retour</button></a>
+                {% endif %}
             </div>
             {{ form_end(sortieForm) }}
         </div>
