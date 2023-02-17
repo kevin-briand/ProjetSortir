@@ -111,7 +111,7 @@ class SortiesController extends AbstractController
 
         if (!$sortie->getParticipants()->contains($user)) {
             $json['error'] = "le désistement à la sortie à " . $sortie->getNom() . " échoué ! (vous ne participez pas à la sortie)";
-        } elseif ($etatWorkflow->getEtat($sortie) !== Etat::EN_COURS &&
+        } elseif ($etatWorkflow->getEtat($sortie) !== Etat::OUVERTE &&
             $etatWorkflow->getEtat($sortie) !== Etat::CLOTUREE) {
             $json['error'] = "le désistement à la sortie à " . $sortie->getNom() . " échoué ! (la sortie ne peux pas être modifiée)";
         } else {
